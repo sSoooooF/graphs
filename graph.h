@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 
-
 class graph {
 	struct vertex {
 	public:
@@ -13,19 +12,17 @@ class graph {
 	};
 
 public:
-	int n;
-	int** adjancency_matrix;
+	int n = 0;
+	int** adjancency_matrix = nullptr;
 	bool is_created = false;
-	graph();
-	graph(char* url);
-	~graph();
-
-	bool check_creation();
+	void readGraphEdges(const char* url);
+	void readGraphMatrix(const char* url);
+	bool isCreated();
 	int weight(vertex vi, vertex vj);
-	bool is_edge(vertex vi, vertex vj);
-	void print_adjancency_matrix();
-	void print_adjancency_list(vertex v);
-	void print_list_of_edges();
-	void print_list_of_edges(vertex v);
-	bool is_directed();
-}
+	bool isEdge(vertex vi, vertex vj);
+	void printAdjancencyMatrix();
+	void printAdjancencyList(vertex v);
+	void printListOfEdges();
+	void printListOfEdges(vertex v);
+	bool isDirected();
+};
