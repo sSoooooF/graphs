@@ -15,7 +15,7 @@ public:
 	int number_of_vertex = 0;
 	int** adjancency_matrix{};
 	bool is_created = false;
-	void readGraphEdges(const char* url);
+	void readGraphEdges(std::string url);
 	void readGraphMatrix(std::string url);
 	bool isCreated();
 	int weight(vertex vi, vertex vj);

@@ -1,31 +1,30 @@
 #include "graph.h"
 #include <fstream>
 #include <string>
+#include <algorithm>
 
-void Graph::readGraphEdges(const char* url)
+void Graph::readGraphEdges(std::string url)
 {
 	std::ifstream file(url);
 	if (!file.is_open())
 	{
-		throw "Error! File is not open!";
+		std::cout <<  "Error! File is not open!\n";
 		return;
 	}
-	int num_of_vertex = 0;
+	int number_of_vertex = 0;
 	std::string str;
 	while (!file.eof())
 	{
 		getline(file, str);
 	}
-	if (str[1] == ' ') 
-	{
-		num_of_vertex = int(str[0]);
-
-	}
-	adjancency_matrix = new int* [num_of_vertex];
-	for (int i = 0; i < num_of_vertex; i++) 
-		adjancency_matrix[i] = new int[num_of_vertex];
-	for (int i = 0; i < num_of_vertex; i++)
-		for (int j = 0; j < num_of_vertex; j++)
+	auto it = std::find_if(str.begin(), str.end(), isdigit);
+	if (it != str.end())
+		number_of_vertex = std::atoi(str.c_str() + (it - str.begin()));
+	adjancency_matrix = new int* [number_of_vertex];
+	for (int i = 0; i < number_of_vertex; i++)
+		adjancency_matrix[i] = new int[number_of_vertex];
+	for (int i = 0; i < number_of_vertex; i++)
+		for (int j = 0; j < number_of_vertex; j++)
 			adjancency_matrix[i][j] = 0;
 	int a=0, b=0, r=0;
 	file.close();
