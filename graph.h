@@ -2,21 +2,21 @@
 #include <iostream>
 #include <fstream>
 
-class graph {
+class Graph {
 	struct vertex {
 	public:
 		int number;
 		vertex(int num) {
 			number = num;
-		};
-	};
+		}; // vertex()
+	}; // struct vertex
 
 public:
-	int n = 0;
-	int** adjancency_matrix = nullptr;
+	int number_of_vertex = 0;
+	int** adjancency_matrix{};
 	bool is_created = false;
 	void readGraphEdges(const char* url);
-	void readGraphMatrix(const char* url);
+	void readGraphMatrix(std::string url);
 	bool isCreated();
 	int weight(vertex vi, vertex vj);
 	bool isEdge(vertex vi, vertex vj);
@@ -25,4 +25,4 @@ public:
 	void printListOfEdges();
 	void printListOfEdges(vertex v);
 	bool isDirected();
-};
+}; // class Graph

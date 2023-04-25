@@ -1,48 +1,31 @@
-﻿#include "graph.h"
+﻿#include "floydWarshall.h"
+#include "Graph.h"
+#include "exersice1.h"
 #include <iostream>
 
-using namespace std;
 
 int main(int argc, char* argv[])
 {
-	graph Graph;
+	Graph graph;
 	int index = 1;
 
-
-
-
-	while (argv) {
-		if (argv[index] == "-e") 
-		{
-			Graph.readGraphEdges(argv[++index]);
-			index++;
-		}
-		if (argv[index] == "-m") 
-		{
-			Graph.readGraphMatrix(argv[++index]);
-			index++;
-		}
-		if (argv[index] == "-l") 
-		{
-
-		}
-	}
-}
-
-
-
-
-
-void floydWarshall(int **matrix, int number_of_vertex) 
-{
-	for (int k = 0; k < number_of_vertex; k++) 
+	/*if (argv[index] == "-h") 
 	{
-		for (int i = 0; i < number_of_vertex; i++) 
-		{
-			for (int j = 0; j < number_of_vertex; j++)
-			{
-				matrix[i][j] = min(matrix[i][j], matrix[i][k] + matrix[k][j]);
-			}
-		}
+
 	}
+	if (argv[index] == "-e") 
+	{
+		graph.readGraphEdges(argv[index+1]);
+	}
+	if (argv[index] == "-m") 
+	{
+		graph.readGraphMatrix(argv[index+1]);
+	}
+	if (argv[index] == "-l") 
+	{
+
+	}*/
+	graph.readGraphMatrix("C:/Users/nurie/source/repos/graphs/task1/matrix_t1_002.txt");
+	exercise1(graph);
+
 }

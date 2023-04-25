@@ -2,32 +2,28 @@
 #include <fstream>
 #include <string>
 
-void graph::readGraphEdges(const char* url) 
+void Graph::readGraphEdges(const char* url)
 {
 	std::ifstream file(url);
-	if (!file.is_open()) 
+	if (!file.is_open())
 	{
 		throw "Error! File is not open!";
 		return;
 	}
 	int num_of_vertex = 0;
-	int trash;
-	char* str;
+	std::string str;
 	while (!file.eof())
 	{
-		file.getline(str, 100);
+		getline(file, str);
 	}
-	if (*(str + 1) != ' ') 
+	if (str[1] == ' ') 
 	{
-		num_of_vertex = *str;
-		num_of_vertex *= 10;
-		num_of_vertex += *(str + 1);
+		num_of_vertex = int(str[0]);
+
 	}
 	adjancency_matrix = new int* [num_of_vertex];
 	for (int i = 0; i < num_of_vertex; i++) 
-	{
 		adjancency_matrix[i] = new int[num_of_vertex];
-	}
 	for (int i = 0; i < num_of_vertex; i++)
 		for (int j = 0; j < num_of_vertex; j++)
 			adjancency_matrix[i][j] = 0;
@@ -40,68 +36,72 @@ void graph::readGraphEdges(const char* url)
 		adjancency_matrix[a - 1][b - 1] = r;
 	}
 	file.close();
+
 }
 
-void graph::readGraphMatrix(const char* url)
+void Graph::readGraphMatrix(std::string url)
 {
 	std::ifstream file(url);
 	std::string unused;
-	while (std::getline(file, unused)) ++n;
+	while (std::getline(file, unused)) ++number_of_vertex;
 	file.close();
+	adjancency_matrix = new int*[number_of_vertex];
+	for (int i = 0; i < number_of_vertex; i++)
+		adjancency_matrix[i] = new int[number_of_vertex];
 	file.open(url);
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
+	for (int i = 0; i < number_of_vertex; i++)
+		for (int j = 0; j < number_of_vertex; j++)
 			file >> adjancency_matrix[i][j];
 	file.close();
 }
 
-bool graph::isCreated() 
+bool Graph::isCreated() 
 {
 	if (is_created == false) {
-		std::cout << "Graph is not created!!\n";
+		std::cout << "Graph is not created!!\number_of_vertex";
 		return false;
 	}
 	else return true;
 }
 
-int graph::weight(vertex vi, vertex vj) 
+int Graph::weight(vertex vi, vertex vj) 
 {
 	bool check = isCreated();
 	if (check == false) return -1;
 	return adjancency_matrix[vi.number - 1][vj.number - 1];
 }
 
-bool graph::isEdge(vertex vi, vertex vj) 
+bool Graph::isEdge(vertex vi, vertex vj) 
 {
 	if (adjancency_matrix[vi.number - 1][vj.number - 1] != 0) return true;
 	else return false;
 }
 
-void graph::printAdjancencyMatrix() 
+void Graph::printAdjancencyMatrix() 
 {
 	isCreated();
-	std::cout << "	Adjancency matrix:\n";
-	for (int i = 0; i < n; i++) {
+	std::cout << "	Adjancency matrix:\number_of_vertex";
+	for (int i = 0; i < number_of_vertex; i++) {
 		std::cout << "\t";
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < number_of_vertex; j++)
 			std::cout << adjancency_matrix[i][j] << "\t";
-		std::cout << "\n";
+		std::cout << "\number_of_vertex";
 	}
 }
 
-void graph::printAdjancencyList(vertex v) 
+void Graph::printAdjancencyList(vertex v) 
 {
 	std::cout << "List of ajancency vertex for vertex number " << v.number << ": ";
-	for (int j = 0; j < n; j++) {
+	for (int j = 0; j < number_of_vertex; j++) {
 		if (adjancency_matrix[v.number - 1][j] != 0) std::cout << j + 1 << ", ";
 	}
 }
 
-bool graph::isDirected() 
+bool Graph::isDirected() 
 {
 	bool yes = false;
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++) {
+	for (int i = 0; i < number_of_vertex; i++)
+		for (int j = 0; j < number_of_vertex; j++) {
 			if (adjancency_matrix[i][j] != adjancency_matrix[i][j]) {
 				yes = true;
 				return yes;
