@@ -42,7 +42,7 @@ void consolOutput(int num_of_ver, int** matrix, int* vert_pos, int* vert_neg, in
 	for (int i = 0; i < num_of_ver; i++)
 		if (i != num_of_ver - 1) std::cout << vert_pos[i] << ", "; // Вывод степеней вершин в консоль
 		else std::cout << vert_pos[i];
-	std::cout << "deg- = ";
+	std::cout << "\ndeg- = ";
 	for (int i = 0; i < num_of_ver; i++)
 		if (i != num_of_ver - 1) std::cout << vert_neg[i] << ", "; // Вывод степеней вершин в консоль
 		else std::cout << vert_neg[i];
@@ -92,7 +92,14 @@ void exercise1(Graph graph)
 	int* vert_pos = new int[num_of_ver];
 	int* vert_neg = new int[num_of_ver];
 	if (graph.isDirected()) {
-		
+		for (int i = 0; i < num_of_ver; i++) vert_pos[i] = 0;
+		for (int i = 0; i < num_of_ver; i++) vert_neg[i] = 0;
+		for (int i = 0; i < num_of_ver; i++)
+			for (int j = 0; j < num_of_ver; j++)
+				if (matrix[i][j] != 0) vert_neg[i]++;
+		for (int i = 0; i < num_of_ver; i++)
+			for (int j = 0; j < num_of_ver; j++)
+				if (matrix[i][j] != 0) vert_pos[j]++;
 	} 
 	else {
 		for (int i = 0; i < num_of_ver; i++) vert[i] = 0;
@@ -119,6 +126,10 @@ void exercise1(Graph graph)
 		if (eccen[i] == rad) center[i] = 1;
 		else if (eccen[i] == diam) perif[i] = 1;
 	} // for
-	consolOutput(num_of_ver, matrix, vert ,diam,rad, center, perif, eccen);
+
+	if (!graph.isDirected())
+		consolOutput(num_of_ver, matrix, vert, diam, rad, center, perif, eccen);
+	else
+		consolOutput(num_of_ver, matrix, vert_pos, vert_neg, diam, rad, center, perif, eccen);
 	return;
 } // exercise1()

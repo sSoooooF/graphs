@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <sstream>
 
 void Graph::readGraphMatrix(std::string url)
 {
@@ -17,6 +18,32 @@ void Graph::readGraphMatrix(std::string url)
 		for (int j = 0; j < number_of_vertex; j++)
 			file >> adjancency_matrix[i][j];
 	file.close();
+}
+
+void Graph::readGraphAdjacency(std::string url)
+{
+	std::ifstream file(url);
+	if (!file.is_open())
+	{
+		std::cout << "Error! File is not open!\n";
+		return;
+	}
+	std::string str;
+	while (std::getline(file, str)) ++number_of_vertex;
+	file.close();
+	adjancency_matrix = new int* [number_of_vertex];
+	file.open(url);
+	int counter = 0;
+	int c;
+	while (std::getline(file, str))
+	{
+		std::istringstream iss(str);
+		while (iss >> c)
+			adjancency_matrix[counter][c - 1] = 1;
+		counter++;
+	}
+	file.close();
+	
 }
 
 void Graph::readGraphEdges(std::string url)
@@ -105,7 +132,7 @@ bool Graph::isDirected()
 	for (int i = 0; i < number_of_vertex; i++)
 		for (int j = i+1; j < number_of_vertex; j++) 
 		{
-			if (adjancency_matrix[i][j] != adjancency_matrix[i][j]) 
+			if (adjancency_matrix[i][j] != adjancency_matrix[j][i]) 
 			{
 				yes = true;
 				return yes;

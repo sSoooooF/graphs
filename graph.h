@@ -18,6 +18,7 @@ public:
 	bool is_created = false;
 	void readGraphEdges(std::string url);
 	void readGraphMatrix(std::string url);
+	void readGraphAdjacency(std::string url);
 	bool isCreated();
 	int weight(vertex vi, vertex vj);
 	bool isEdge(vertex vi, vertex vj);
