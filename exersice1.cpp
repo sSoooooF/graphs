@@ -3,9 +3,11 @@
 #include "exersice1.h"
 #include <vector>
 
-#define INF 99999
+#define INF 999
 #define MAX(a,b) a >= b ? a : b
 #define MIN(a,b) a < b ? a : b
+
+void help() { std::cout << "Автор работы Нуриев Наиль Ниязович\nГруппа М3О-211Б-21\nСписок ключей:\n-e 'edges_list_file_path'\n-m 'adjancency_matrix_file_path\n-l 'adjancency_list_file_path\n-o 'output_file_path\n"; }
 
 void consolOutput(int num_of_ver, int** matrix, int* vert, int diam, int rad, int* center, int* perif, int* eccen)
 {
@@ -32,7 +34,38 @@ void consolOutput(int num_of_ver, int** matrix, int* vert, int diam, int rad, in
 	for (int i = 0; i < num_of_ver; i++)
 		if (perif[i] == 1) std::cout << i + 1 << " ";
 	std::cout << "\n";
-} // consolOutput
+} // consolOutput()
+
+void consolOutput(int num_of_ver, int** matrix, int* vert_pos, int* vert_neg, int diam, int rad, int* center, int* perif, int* eccen)
+{
+	std::cout << "deg+ = ";
+	for (int i = 0; i < num_of_ver; i++)
+		if (i != num_of_ver - 1) std::cout << vert_pos[i] << ", "; // Вывод степеней вершин в консоль
+		else std::cout << vert_pos[i];
+	std::cout << "deg- = ";
+	for (int i = 0; i < num_of_ver; i++)
+		if (i != num_of_ver - 1) std::cout << vert_neg[i] << ", "; // Вывод степеней вершин в консоль
+		else std::cout << vert_neg[i];
+	std::cout << "\nDistancies:";
+	for (int i = 0; i < num_of_ver; i++) {
+		std::cout << "\n";
+		for (int j = 0; j < num_of_ver; j++)
+			std::cout << matrix[i][j] << "\t";
+	} // for
+	std::cout << "\nEccentricity:\n";
+	for (int i = 0; i < num_of_ver; i++) {
+		if (i != num_of_ver - 1) std::cout << eccen[i] << ", ";
+		else std::cout << eccen[i];
+	}
+	std::cout << "\nD = " << diam << "\nR = " << rad;
+	std::cout << "\nZ = ";
+	for (int i = 0; i < num_of_ver; i++)
+		if (center[i] == 1) std::cout << i + 1 << " ";
+	std::cout << "\nP = ";
+	for (int i = 0; i < num_of_ver; i++)
+		if (perif[i] == 1) std::cout << i + 1 << " ";
+	std::cout << "\n";
+} // consolOutput()
 
 int diameter(int* eccen, int num)
 {
@@ -56,10 +89,17 @@ void exercise1(Graph graph)
 	int** matrix = graph.adjancency_matrix;	// Копируем матрицу инцидентности из графа
 	int num_of_ver = graph.number_of_vertex; // Копируем количество вершин из графа
 	int* vert = new int[num_of_ver]; // Матрица для степеней вершин графа
-	for (int i = 0; i < num_of_ver; i++) vert[i] = 0;
-	for (int i = 0; i < num_of_ver; i++)
-		for (int j = 0; j < num_of_ver; j++)
-			if (matrix[i][j] != 0) vert[i]++; // Подстчет степеней вершин 
+	int* vert_pos = new int[num_of_ver];
+	int* vert_neg = new int[num_of_ver];
+	if (graph.isDirected()) {
+		
+	} 
+	else {
+		for (int i = 0; i < num_of_ver; i++) vert[i] = 0;
+		for (int i = 0; i < num_of_ver; i++)
+			for (int j = 0; j < num_of_ver; j++)
+				if (matrix[i][j] != 0) vert[i]++; // Подстчет степеней вершин 
+	}
 	for (int i = 0; i < num_of_ver; i++)
 		for (int j = 0; j < num_of_ver; j++)
 			if (matrix[i][j] == 0) matrix[i][j] = INF;
@@ -79,6 +119,6 @@ void exercise1(Graph graph)
 		if (eccen[i] == rad) center[i] = 1;
 		else if (eccen[i] == diam) perif[i] = 1;
 	} // for
-	consolOutput(num_of_ver, matrix, vert,diam,rad, center, perif, eccen);
+	consolOutput(num_of_ver, matrix, vert ,diam,rad, center, perif, eccen);
 	return;
 } // exercise1()

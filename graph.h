@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <fstream>
 
 class Graph {
@@ -13,7 +14,7 @@ class Graph {
 
 public:
 	int number_of_vertex = 0;
-	int** adjancency_matrix{};
+	int** adjancency_matrix = nullptr;
 	bool is_created = false;
 	void readGraphEdges(std::string url);
 	void readGraphMatrix(std::string url);
