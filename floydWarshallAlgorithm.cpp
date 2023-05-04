@@ -1,6 +1,6 @@
-#include "floydWarshall.h"
+#pragma once
 #include <algorithm>
-#define MIN(a,b) a < b ? a : b
+#include "floydWarshallAlgorithm.h"
 
 int** floydWarshallAlgorithm(int** matrix, int number_of_vertex)
 {

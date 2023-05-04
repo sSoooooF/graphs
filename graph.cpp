@@ -3,6 +3,10 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <vector>
+#include <queue>
+
+#define INF 999
 
 void Graph::readGraphMatrix(std::string url)
 {
@@ -140,5 +144,61 @@ bool Graph::isDirected()
 		}
 	return yes;
 }
+
+bool Graph::bfs(int v) {
+	visited = new bool[number_of_vertex];
+	for (int i = 0; i < number_of_vertex; i++)
+		visited[i] = false;
+	std::queue<int> q;
+	visited[v] = true;
+	q.push(v);
+	while (!q.empty())
+	{
+		int s = q.front();
+		visited[s] = true;
+		q.pop();
+		for (int i = 0; i < number_of_vertex; i++)
+			if (adjancency_matrix[s][i] != 0)
+				q.push(i);
+	}
+	for (int i = 0; i < number_of_vertex; i++)
+		if (visited[i] == false)
+		{
+			return false;
+		}
+	return true;
+}
+
+std::pair<int, int*> Graph::bfsA()
+{
+	std::pair<int, int*> pair;
+	int cnt = 0;
+	std::queue<int> q;
+	int* cmpnt = new int[number_of_vertex];
+	for (int i = 0; i < number_of_vertex; i++)
+		cmpnt[i] = -1;
+	for (int i = 0; i < number_of_vertex; i++)
+	{
+		if (cmpnt[i] != -1)
+			continue;
+		q.push(i);
+		while (!q.empty())
+		{
+			int v = q.front();
+			q.pop();
+			if (cmpnt[i] != -1)
+				continue;
+			cmpnt[v] = cnt;
+			for (int j = 0; j < number_of_vertex; j++)
+				if (adjancency_matrix[i][j] != 0 && cmpnt[j] == -1)
+					q.push(j);
+		}
+		cnt++;
+	}
+	pair.first = cnt;
+	pair.second = cmpnt;
+	return pair;
+}
+
 
 // Дописать две функции printListOfEdges();

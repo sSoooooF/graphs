@@ -127,14 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="exersice1.cpp" />
-    <ClCompile Include="exersice1.h" />
+    <ClCompile Include="exercise3.cpp" />
+    <ClCompile Include="exercise1.cpp" />
+    <ClCompile Include="exercise2.cpp" />
     <ClCompile Include="floydWarshallAlgorithm.cpp" />
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="floydWarshall.h" />
+    <ClInclude Include="exercise1.h" />
+    <ClInclude Include="exercise2.h" />
+    <ClInclude Include="exercise3.h" />
+    <ClInclude Include="floydWarshallAlgorithm.h" />
     <ClInclude Include="graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

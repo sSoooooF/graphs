@@ -1,6 +1,6 @@
-﻿#include "floydWarshall.h"
-#include "Graph.h"
-#include "exersice1.h"
+﻿#include "Graph.h"
+#include "exercise1.h"
+#include "exercise2.h"
 #include <iostream>
 
 const char* h = "-h";
@@ -33,6 +33,6 @@ void main(int argc, const char** argv)
 		std::cout << "Error! Wrong parameter!\n";
 		return;
 	}*/
-	graph.readGraphMatrix(argv[2]);
-	exercise1(graph);
+	graph.readGraphMatrix("task2/matrix_t2_001.txt");
+	exercise2(graph);
 }

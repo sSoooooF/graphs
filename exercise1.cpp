@@ -1,7 +1,7 @@
 #include "graph.h"
-#include "floydWarshall.h"
-#include "exersice1.h"
+#include "floydWarshallAlgorithm.h"
 #include <vector>
+#include "exercise1.h"
 
 #define INF 999
 #define MAX(a,b) a >= b ? a : b
