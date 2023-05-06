@@ -123,7 +123,8 @@ void exercise1(Graph graph)
 	int* center = new int[num_of_ver];
 	int* perif = new int[num_of_ver];
 	for (int i = 0; i < num_of_ver; i++) {
-		if (eccen[i] == rad) center[i] = 1;
+		if (rad == diam) center[i] = perif[i] = 1;
+		else if (eccen[i] == rad) center[i] = 1;
 		else if (eccen[i] == diam) perif[i] = 1;
 	} // for
 

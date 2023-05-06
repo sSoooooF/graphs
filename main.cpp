@@ -1,38 +1,34 @@
 ﻿#include "Graph.h"
 #include "exercise1.h"
 #include "exercise2.h"
+#include "exercise3.h"
 #include <iostream>
-
-const char* h = "-h";
-const char* m = "-m";
-const char* e = "-e";
-const char* l = "-l";
 
 void main(int argc, const char** argv)
 {
 	Graph graph;
 	int index = 1;
 
-	/*if (argv[index] == m)
+	if (std::string(argv[index]) == "-m")
 	{
-		graph.readGraphMatrix(argv[index+1]);
+		graph.readGraphMatrix(argv[++index]);
 	}
-	else if (argv[index] == e)
+	else if (std::string(argv[index]) == "-e")
 	{
-		graph.readGraphEdges(argv[index+1]);
+		graph.readGraphEdges(argv[++index]);
 	}
-	else if (argv[index] == l)
+	else if (std::string(argv[index]) == "-l")
 	{
-
+		graph.readGraphAdjacency(argv[++index]);
 	}
-	else if (argv[index] == h)
+	else if (std::string(argv[index]) == "-h")
 	{
 		help();
 	}
 	else {
 		std::cout << "Error! Wrong parameter!\n";
 		return;
-	}*/
-	graph.readGraphMatrix("task2/matrix_t2_001.txt");
-	exercise2(graph);
+	}
+	//graph.readGraphMatrix("task2/matrix_t2_002.txt");
+	exercise1(graph);
 }
