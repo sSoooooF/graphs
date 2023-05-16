@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>;
+#include <vector>
 #include "graph.h"
 
 void dfs(Graph graph, int v, int parent, std::vector<int>& disc, std::vector<int>& low, std::vector<bool>& visited, std::vector<bool>& articularPoints, std::vector<std::pair<int, int>>& bridges, int& time);

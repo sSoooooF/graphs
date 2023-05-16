@@ -31,6 +31,6 @@ void main(int argc, const char** argv)
 		std::cout << "Error! Wrong parameter!\n";
 		return;
 	}*/
-	graph.readGraphMatrix("task4/matrix_t4_001.txt");
+	graph.readGraphMatrix("task4/matrix_t4_002.txt");
 	exercise4(graph);
 }

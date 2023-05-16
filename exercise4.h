@@ -2,14 +2,22 @@
 #include "graph.h"
 #include <vector>
 
-int findMinKeyVertex(std::vector<int>& key, std::vector<bool>& mstVector, int num_of_vert);
-
-void printMST(std::vector<int>& parent, Graph graph);
-
-void printMST(std::vector<int>& parent, std::vector<std::vector<int>>& undirGraph);
-
-int findMST(Graph graph);
-
-int findMST(std::vector<std::vector<int>>& undirGraph);
-
 void exercise4(Graph graph);
+
+int findRoot(std::vector<int>& parent, int v);
+
+void unionSets(std::vector<int>& parent, int root1, int root2);
+
+int findMinKeyVertex(std::vector<int>& key, std::vector<bool>& mst_vector, int num_of_vert);
+
+void findMSTBr(Graph graph);
+
+void findMSTBr(std::vector<std::vector<int>> undirGraph, int num_of_vert);
+
+void findMSTKr(Graph graph);
+
+void findMSTKr(std::vector<std::vector<int>>& undirGraph, int num_of_vert);
+
+void findMSTPr(Graph graph);
+
+void findMSTPr(std::vector<std::vector<int>>& undirGraph, int num_of_vert);
