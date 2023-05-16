@@ -2,14 +2,16 @@
 #include "exercise1.h"
 #include "exercise2.h"
 #include "exercise3.h"
+#include "exercise4.h"
 #include <iostream>
 
 void main(int argc, const char** argv)
 {
+	setlocale(LC_ALL, "rus");
 	Graph graph;
 	int index = 1;
 
-	if (std::string(argv[index]) == "-m")
+	/*if (std::string(argv[index]) == "-m")
 	{
 		graph.readGraphMatrix(argv[++index]);
 	}
@@ -28,7 +30,7 @@ void main(int argc, const char** argv)
 	else {
 		std::cout << "Error! Wrong parameter!\n";
 		return;
-	}
-	//graph.readGraphMatrix("task2/matrix_t2_002.txt");
-	exercise1(graph);
+	}*/
+	graph.readGraphMatrix("task4/matrix_t4_001.txt");
+	exercise4(graph);
 }
