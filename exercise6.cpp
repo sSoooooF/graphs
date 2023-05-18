@@ -1,0 +1,148 @@
+#include "exercise6.h"
+#include "graph.h"
+#include <vector>
+#include <queue>
+#include <string>
+
+std::vector<int> dijkstra(Graph graph, int start_vertex)
+{
+	int num_of_vert = graph.number_of_vertex;
+	std::vector<int> distances(num_of_vert, INT_MAX);
+	std::vector<bool> visited(num_of_vert, false);
+
+	distances[start_vertex] = 0;
+
+	std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+	pq.push({ distances[start_vertex] ,start_vertex});
+
+	while (!pq.empty())
+	{
+		int u = pq.top().second;
+		pq.pop();
+
+		if (visited[u])
+			continue;
+
+		visited[u] = true;
+
+		for (int i = 0; i < num_of_vert; ++i)
+			if (graph.adjancency_matrix[u][i] && distances[u] != INT_MAX && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
+			{
+				distances[i] = distances[u] + graph.adjancency_matrix[u][i];
+				pq.push({ distances[i],i });
+			}
+	}
+
+	return distances;
+}
+
+std::vector<int> bellmanFordMoore(Graph graph, int start_vertex)
+{
+	int num_of_vert = graph.number_of_vertex;
+	std::vector<int> distances(num_of_vert, INT_MAX);
+
+	distances[start_vertex] = 0;
+
+	for (int i = 0; i < num_of_vert - 1; ++i)
+		for (int j = 0; j < num_of_vert; ++j)
+			for (int v = 0; v < num_of_vert; ++v)
+				if (graph.adjancency_matrix[j][v] != 0 && distances[j] != INT_MAX && distances[j] + graph.adjancency_matrix[j][v] < distances[v])
+					distances[v] = distances[j] + graph.adjancency_matrix[j][v];
+
+	return distances;
+}
+
+std::vector<int> levit(Graph graph, int start_vertex)
+{
+	int num_of_vert = graph.number_of_vertex;
+	std::vector<int> distances(num_of_vert, INT_MAX);
+	std::vector<bool> visited(num_of_vert, false);
+
+	distances[start_vertex] = 0;
+
+	std::deque<int> q;
+	q.push_back(start_vertex);
+
+	while (!q.empty())
+	{
+		int u = q.front();
+		q.pop_front();
+
+		visited[u] = true;
+
+		for (int i = 0; i < num_of_vert;++i)
+			if (graph.adjancency_matrix[u][i] != 0 && distances[u] != INT_MAX && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
+			{
+				distances[i] = distances[u] + graph.adjancency_matrix[u][i];
+
+				if (!visited[i])
+				{
+					if (!q.empty() && distances[i] < distances[q.front()])
+						q.push_back(i);
+					else
+						q.push_back(i);
+					visited[i] = true;
+				}
+			}
+	}
+
+	return distances;
+}
+
+void exercise6(Graph graph, int argc, const char** argv)
+{
+	/*int algorithm = 0;
+	int start_vertex = -1;
+
+	for (int i = 0; i < argc; ++i)
+	{
+		const char* key = argv[i];
+		const char* param = argv[i + 1];
+		if (strcmp(key, "-d"))
+			algorithm = 1;
+		else if (strcmp(key, "-b"))
+			algorithm = 2;
+		else if (strcmp(key, "-t"))
+			algorithm = 3;
+		else if (strcmp(key, "-n"))
+			start_vertex = std::stoi(param);
+	}
+
+	std::vector<int> answer;
+
+	switch (algorithm)
+	{
+	case 1:
+		answer = dijkstra(graph, start_vertex);
+		break;
+	case 2:
+		answer = bellmanFordMoore(graph, start_vertex);
+		break;
+	case 3:
+		answer = levit(graph, start_vertex);
+		break;
+	default:
+		std::cout << "Error: Invalid algorithm option.";
+		return;
+	}*/
+
+	int start_vertex = 6;
+	std::vector<int> answer = levit(graph, start_vertex-1);
+
+	for (int i = 0; i < answer.size();++i)
+		if (answer[i] < 0)
+		{
+			std::cout << "Граф содержит отрицательный цикл!";
+			return;
+		}
+
+	std::cout << "Distances from vertex " << start_vertex << ":\n";
+	for (int i = 0; i < answer.size(); ++i) {
+		if (answer[i] == INT_MAX) {
+			std::cout << "Vertex " << i+1 << ": INF\n";
+		}
+		else {
+			std::cout << "Vertex " << i+1 << ": " << answer[i] << "\n";
+		}
+	}
+}
