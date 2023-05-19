@@ -48,31 +48,28 @@ std::pair<std::vector<int>, int> dijkstra(Graph graph, int start, int end)
 	return { path, distances[end] };
 }
 
-void exercise5(Graph graph, int argc, const char** argv)
+void exercise5(Graph graph, int argc, const char* argv[])
 {
-	int str = 5;
-	int startVertex = str-1;
-	int end = 4;
-	int endVertex = end - 1;
+	int startVertex = -1;
+	int endVertex = -1;
 
-	/*for (int i = 1; i < argc; i += 2) {
+	for (int i = 1; i < argc; ++i)
+	{
 		std::string key = argv[i];
-		std::string value = argv[i + 1];
 
-		if (key == "-n") {
-			startVertex = std::stoi(value);
-		}
-		else if (key == "-d") {
-			endVertex = std::stoi(value);
-		}
+		if (key == "-n")
+			startVertex = std::stoi(argv[i + 1]);
+		else if (key == "-d")
+			endVertex = std::stoi(argv[i + 1]);
+
 	}
 
 	if (startVertex == -1 || endVertex == -1) {
 		std::cout << "Start and end vertices must be specified!\n";
 		return;
-	}*/
+	}
 
-	std::pair<std::vector<int>, int> answer = dijkstra(graph, startVertex, endVertex);
+	std::pair<std::vector<int>, int> answer = dijkstra(graph, startVertex-1, endVertex-1);
 
 	std::cout << "Кратчайший путь от вершины " << startVertex << " до вершины " << endVertex << ":\n";
 	for (int i = 0; i < answer.first.size(); ++i)

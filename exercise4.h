@@ -2,7 +2,7 @@
 #include "graph.h"
 #include <vector>
 
-void exercise4(Graph graph);
+void exercise4(Graph graph, int argc, const char* argv[]);
 
 int findRoot(std::vector<int>& parent, int v);
 

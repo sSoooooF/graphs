@@ -89,23 +89,35 @@ std::vector<int> levit(Graph graph, int start_vertex)
 	return distances;
 }
 
-void exercise6(Graph graph, int argc, const char** argv)
+void exercise6(Graph graph, int argc, const char* argv[])
 {
-	/*int algorithm = 0;
+	int algorithm = 0;
 	int start_vertex = -1;
 
 	for (int i = 0; i < argc; ++i)
 	{
-		const char* key = argv[i];
-		const char* param = argv[i + 1];
-		if (strcmp(key, "-d"))
+		std::string key = argv[i];
+		if (key == "-d") {
 			algorithm = 1;
-		else if (strcmp(key, "-b"))
+			break;
+		}
+		else if (key == "-b") {
 			algorithm = 2;
-		else if (strcmp(key, "-t"))
+			break;
+		}
+		else if (key == "-t") {
 			algorithm = 3;
-		else if (strcmp(key, "-n"))
-			start_vertex = std::stoi(param);
+			break;
+		}
+	}
+
+	for (int i = 0; i < argc; ++i)
+	{
+		std::string key = argv[i];
+		if (key == "-n") {
+			start_vertex = std::stoi(argv[i+1]);
+			break;
+		}
 	}
 
 	std::vector<int> answer;
@@ -113,21 +125,21 @@ void exercise6(Graph graph, int argc, const char** argv)
 	switch (algorithm)
 	{
 	case 1:
-		answer = dijkstra(graph, start_vertex);
+		answer = dijkstra(graph, start_vertex-1);
 		break;
 	case 2:
-		answer = bellmanFordMoore(graph, start_vertex);
+		answer = bellmanFordMoore(graph, start_vertex-1);
 		break;
 	case 3:
-		answer = levit(graph, start_vertex);
+		answer = levit(graph, start_vertex-1);
 		break;
 	default:
 		std::cout << "Error: Invalid algorithm option.";
 		return;
-	}*/
+	}
 
-	int start_vertex = 6;
-	std::vector<int> answer = levit(graph, start_vertex-1);
+	/*int start_vertex = 6;
+	std::vector<int> answer = levit(graph, start_vertex-1);*/
 
 	for (int i = 0; i < answer.size();++i)
 		if (answer[i] < 0)

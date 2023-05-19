@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <ctime>
 
 struct Edge
 {
@@ -376,13 +377,76 @@ void findMSTPr(std::vector<std::vector<int>>& undirGraph, int num_of_vert)
 	std::cout << "Суммарный вес остовного дерева: " << total_weight;
 } // end findMST()
 
-void exercise4(Graph graph)
+void exercise4(Graph graph, int argc, const char* argv[])
 {
+	int algorithm = 0;
+
+	for (int i = 0; i < argc; ++i)
+	{
+		std::string key = argv[i];
+		if (key == "-k") 
+		{
+			algorithm = 1;
+			break;
+		}
+		else if (key == "-p") 
+		{
+			algorithm = 2;
+			break;
+		}
+		else if (key == "-b") 
+		{
+			algorithm = 3;
+			break;
+		}
+		else if (key == "-s")
+		{
+			algorithm = 4;
+			break;
+		}
+	}
+
+	int time;
+
 	if (!graph.isDirected())
-		findMSTBr(graph);
+	{
+		if (algorithm == 1)
+			findMSTKr(graph);
+		if (algorithm == 2)
+			findMSTPr(graph);
+		if (algorithm == 3)
+			findMSTBr(graph);
+		if (algorithm == 4)
+		{
+			std::cout << "Kruskala\n";
+			findMSTKr(graph);
+			std::cout << "\n\nPrima\n";
+			findMSTPr(graph);
+			std::cout << "\n\nBoruvka\n";
+			findMSTBr(graph);
+		}
+	}
 	else
 	{
 		std::vector<std::vector<int>> undirGraph = convertToUndirectedGraph(graph);
-		findMSTBr(undirGraph, graph.number_of_vertex);
+		if (algorithm == 1)
+			findMSTKr(undirGraph, graph.number_of_vertex);
+		if (algorithm == 2)
+			findMSTPr(undirGraph, graph.number_of_vertex);
+		if (algorithm == 3)
+			findMSTBr(undirGraph, graph.number_of_vertex);
+		if (algorithm == 4)
+		{
+			std::cout << "Kruskala\n";
+			time = clock();
+			findMSTKr(undirGraph, graph.number_of_vertex);
+			std::cout << "\nВремя работы алгоритма Крускала " << clock()-time << "\n\nPrima\n";
+			time = clock();
+			findMSTPr(undirGraph, graph.number_of_vertex);
+			std::cout << "\nВремя работы алгоритма Прима " << clock() - time << "\n\nBoruvka\n";
+			time = clock();
+			findMSTBr(undirGraph,graph.number_of_vertex);
+			std::cout << "\nВремя работы алгоритма Борувки " << clock() - time;
+		}
 	}
 }
