@@ -4,6 +4,29 @@
 #include <queue>
 #include <string>
 
+bool hasNegativeCycle(Graph graph)
+{
+	int num_of_vert = graph.number_of_vertex;
+
+	int** distances = new int* [num_of_vert];
+	for (int i = 0; i < num_of_vert; ++i)
+		distances[i] = new int[num_of_vert];
+
+	distances = graph.adjancency_matrix;
+
+	for (int k = 0; k < num_of_vert; ++k)
+		for (int i = 0; i < num_of_vert; ++i)
+			for (int j = 0; j < num_of_vert; ++j)
+				distances[i][j] = std::min(distances[i][j], distances[i][k] + distances[k][j]);
+
+	for (int i = 0; i < num_of_vert; ++i)
+		if (distances[i][i] < 0)
+			return true;
+
+	return false;
+}
+
+
 std::vector<int> dijkstra(Graph graph, int start_vertex)
 {
 	int num_of_vert = graph.number_of_vertex;
@@ -122,6 +145,12 @@ void exercise6(Graph graph, int argc, const char* argv[])
 
 	std::vector<int> answer;
 
+	if (hasNegativeCycle(graph))
+	{
+		std::cout << "Граф имеет отрицательный цикл!";
+		return;
+	}
+
 	switch (algorithm)
 	{
 	case 1:
@@ -141,13 +170,9 @@ void exercise6(Graph graph, int argc, const char* argv[])
 	/*int start_vertex = 6;
 	std::vector<int> answer = levit(graph, start_vertex-1);*/
 
-	for (int i = 0; i < answer.size();++i)
-		if (answer[i] < 0)
-		{
-			std::cout << "Граф содержит отрицательный цикл!";
-			return;
-		}
+	
 
+	
 	std::cout << "Distances from vertex " << start_vertex << ":\n";
 	for (int i = 0; i < answer.size(); ++i) {
 		if (answer[i] == INT_MAX) {

@@ -19,28 +19,7 @@ void main(int argc, const char* argv[])
 
 	int task = -1;
 
-	//for (int i = 1; i < argc; ++i)
-	//{
-	//	std::string key = argv[i];
-
-	//	if (key == "-t1")
-	//		task = 1;
-	//	else if (key == "-t2")
-	//		task = 2;
-	//	else if (key == "-t3")
-	//		task = 3;
-	//	else if (key == "-t4")
-	//		task = 4;
-	//	else if (key == "-t5")
-	//		task = 5;
-	//	else if (key == "-t6")
-	//		task = 6;
-	//	else
-	//		break;
-	//}
-
-
-	for (int i = 1; i < argc; i += 2) {
+	for (int i = 1; i < argc; ++i) {
 		std::string key = argv[i];
 		std::string value = argv[i + 1];
 
@@ -73,30 +52,6 @@ void main(int argc, const char* argv[])
 	if (useAdjacencyList)
 		graph.readGraphAdjacency(filePath);
 
-	//graph.readGraphMatrix("C:/Users/nurie/source/repos/graphs/task6/matrix_t6_001.txt");
-
-	/*switch (task)
-	{
-	case 1:
-		exercise1(graph);
-		break;
-	case 2:
-		exercise2(graph);
-		break;
-	case 3:
-		exercise3(graph);
-		break;
-	case 4:
-		exercise4(graph, argc, argv);
-		break;
-	case 5:
-		exercise5(graph, argc, argv);
-		break;
-	case 6:
-		exercise6(graph, argc, argv);
-		break;
-	default:
-		break;
-	}*/
+	//graph.readGraphMatrix("task4/matrix_t2_001.txt");
 	exercise4(graph, argc, argv);
 }

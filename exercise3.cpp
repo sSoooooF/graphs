@@ -6,11 +6,11 @@
 
 #define MIN(a,b) a < b ? a : b
 
-void dfs(Graph graph, int v, int parent, std::vector<int>& disc, std::vector<int>& low, std::vector<bool>& visited, std::vector<bool>& articularPoints, std::vector<std::pair<int, int>>& bridges, int& time)
+void dfs(Graph graph, int v, int parent, std::vector<int>& time_in, std::vector<int>& up, std::vector<bool>& visited, std::vector<bool>& articularPoints, std::vector<std::pair<int, int>>& bridges, int& time)
 {
 	int num_of_vert = graph.number_of_vertex;
 	visited[v] = true;
-	disc[v] = low[v] = ++time;
+	time_in[v] = up[v] = ++time;
 	int childCounter = 0;
 
 	for (int i = 0; i < num_of_vert; ++i)
@@ -19,28 +19,28 @@ void dfs(Graph graph, int v, int parent, std::vector<int>& disc, std::vector<int
 			if (!visited[i])
 			{
 				childCounter++;
-				dfs(graph, i, v, disc, low, visited, articularPoints, bridges, time);
-				low[v] = MIN(low[v], low[i]);
+				dfs(graph, i, v, time_in, up, visited, articularPoints, bridges, time);
+				up[v] = MIN(up[v], up[i]);
 
-				if (parent != -1 && low[i] >= disc[v])
+				if (parent != -1 && up[i] >= time_in[v])
 					articularPoints[v] = true;
 
-				if (low[i] > disc[v])
+				if (up[i] > time_in[v])
 					bridges.push_back({ v, i });
 			}
 			else if (i != parent)
-				low[v] = MIN(low[v], disc[i]);
+				up[v] = MIN(up[v], time_in[i]);
 	}
 
 	if (parent == -1 && childCounter > 1)
 		articularPoints[v] = true;
 }
 
-void dfs(std::vector<std::vector<int>> graph, int v, int parent, std::vector<int>& disc, std::vector<int>& low, std::vector<bool>& visited, std::vector<bool>& articularPoints, std::vector<std::pair<int, int>>& bridges, int& time)
+void dfs(std::vector<std::vector<int>> graph, int v, int parent, std::vector<int>& time_in, std::vector<int>& up, std::vector<bool>& visited, std::vector<bool>& articularPoints, std::vector<std::pair<int, int>>& bridges, int& time)
 {
 	int num_of_vert = graph.size();
 	visited[v] = true;
-	disc[v] = low[v] = ++time;
+	time_in[v] = up[v] = ++time;
 	int childCounter = 0;
 
 	for (int i = 0; i < num_of_vert; ++i)
@@ -49,17 +49,17 @@ void dfs(std::vector<std::vector<int>> graph, int v, int parent, std::vector<int
 			if (!visited[i])
 			{
 				childCounter++;
-				dfs(graph, i, v, disc, low, visited, articularPoints, bridges, time);
-				low[v] = MIN(low[v], low[i]);
+				dfs(graph, i, v, time_in, up, visited, articularPoints, bridges, time);
+				up[v] = MIN(up[v], up[i]);
 
-				if (parent != -1 && low[i] >= disc[v])
+				if (parent != -1 && up[i] >= time_in[v])
 					articularPoints[v] = true;
 
-				if (low[i] > disc[v])
+				if (up[i] > time_in[v])
 					bridges.push_back({ v, i });
 			}
 			else if (i != parent)
-				low[v] = MIN(low[v], disc[i]);
+				up[v] = MIN(up[v], time_in[i]);
 	}
 
 	if (parent == -1 && childCounter > 1)
@@ -69,27 +69,27 @@ void dfs(std::vector<std::vector<int>> graph, int v, int parent, std::vector<int
 void findBridgesAndArticulationPoints(Graph graph, std::vector<bool>& articulationPoints, std::vector<std::pair<int, int>>& bridges)
 {
 	int num_of_vert = graph.number_of_vertex;
-	std::vector<int> disc(num_of_vert, 0);
-	std::vector<int> low(num_of_vert, 0);
+	std::vector<int> time_in(num_of_vert, 0);
+	std::vector<int> up(num_of_vert, 0);
 	std::vector<bool> visited(num_of_vert, false);
 	int time = 0;
 
 	for (int i = 0; i < num_of_vert; ++i)
 		if (!visited[i])
-			dfs(graph, i, -1, disc, low, visited, articulationPoints, bridges, time);
+			dfs(graph, i, -1, time_in, up, visited, articulationPoints, bridges, time);
 }
 
 void findBridgesAndArticulationPoints(std::vector<std::vector<int>> graph, std::vector<bool>& articulationPoints, std::vector<std::pair<int, int>>& bridges)
 {
 	int num_of_vert = graph.size();
-	std::vector<int> disc(num_of_vert, 0);
-	std::vector<int> low(num_of_vert, 0);
+	std::vector<int> time_in(num_of_vert, 0);
+	std::vector<int> up(num_of_vert, 0);
 	std::vector<bool> visited(num_of_vert, false);
 	int time = 0;
 
 	for (int i = 0; i < num_of_vert; ++i)
 		if (!visited[i])
-			dfs(graph, i, -1, disc, low, visited, articulationPoints, bridges, time);
+			dfs(graph, i, -1, time_in, up, visited, articulationPoints, bridges, time);
 }
 
 std::vector<std::vector<int>> convertToUndirectedGraph(Graph graph)

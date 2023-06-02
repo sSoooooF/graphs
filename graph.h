@@ -7,7 +7,6 @@ public:
 	int number_of_vertex = 0;		// количество вершин в графе
 	int** adjancency_matrix = nullptr;	// матрица инцидентности
 	bool is_created = false;			// создан ли граф
-	bool* visited;						// посещенные вершины
 	void readGraphEdges(std::string url);	// чтение графа из файла с ребрами
 	void readGraphMatrix(std::string url);	// чтение графа из матрицы
 	void readGraphAdjacency(std::string url);	// чтение графа из списка смежности

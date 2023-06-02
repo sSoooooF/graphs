@@ -29,7 +29,26 @@ void unionSets(std::vector<int>& parent, int root1, int root2)
 	parent[root1] = root2;
 }
 
-// Поиск индекса вершины с минимальным ключом, которая еще не включена в остовное дерево
+int find(std::vector<int>& parent, int i) {
+	if (parent[i] == i)
+		return i;
+	return find(parent, parent[i]);
+}
+
+void unionComp(std::vector<int>& parent, std::vector<int>& rank, int x, int y) {
+	int xroot = find(parent, x);
+	int yroot = find(parent, y);
+
+	if (rank[xroot] < rank[yroot])
+		parent[xroot] = yroot;
+	else if (rank[xroot] > rank[yroot])
+		parent[yroot] = xroot;
+	else {
+		parent[yroot] = xroot;
+		rank[xroot]++;
+	}
+}
+
 int findMinKeyVertex(std::vector<int>& key, std::vector<bool>& mst_vector, int num_of_vert)
 {
 	int min_key = INT_MAX;
@@ -51,144 +70,122 @@ void findMSTBr(Graph graph)
 {
 	int num_of_vert = graph.number_of_vertex;
 
-	std::vector<Edge> mstEdges;
+	std::vector<Edge> mstTree;
 
-	std::vector<int> cheapest(num_of_vert, INT_MAX);
-	std::vector<int> root(num_of_vert);
-	std::vector<int> subset(num_of_vert, -1);
-
-	for (int i = 0; i < num_of_vert; ++i)
-		root[i] = i;
-
-	int components = num_of_vert;
-
-	int total_weight = 0;
-
-	while (components > 1)
+	while (mstTree.size() < num_of_vert - 1) 
 	{
-		for (int i = 0; i <num_of_vert;++i)
-			for (int j = 0; j < num_of_vert; ++j)
-				if (graph.adjancency_matrix[i][j]!=0) {
-					int dest = j;
+		std::vector<int> parent(num_of_vert);
+		std::vector<int> rank(num_of_vert);
 
-					if (root[i] != root[dest] && graph.adjancency_matrix[i][j] < cheapest[root[i]])
-						cheapest[root[i]] = graph.adjancency_matrix[i][j];
-				}
-
-		for (int i = 0; i < num_of_vert; ++i)
+		for (int v = 0; v < num_of_vert; ++v) 
 		{
-			int cheapest_edge = cheapest[i];
-			if (cheapest_edge != INT_MAX)
-			{
-				int dest = -1;
-				int min_weight = INT_MAX;
-				for (int j = 0; j < num_of_vert; ++j)
-					if (graph.adjancency_matrix[i][j] != 0)
-						if (root[i] != root[j] && graph.adjancency_matrix[i][j] == cheapest_edge)
-							if (graph.adjancency_matrix[i][j] < min_weight)
-							{
-								min_weight = graph.adjancency_matrix[i][j];
-								dest = j;
-							}
+			parent[v] = v;
+			rank[v] = 0;
+		}
 
-				if (dest != -1)
+		for (int comp = 0; comp < num_of_vert; ++comp) 
+		{
+			int minWeight = INT_MAX;
+			int minSrc = -1;
+			int minDest = -1;
+
+			for (int src = 0; src < num_of_vert; ++src) {
+				for (int dest = 0; dest < num_of_vert; ++dest)
 				{
-					mstEdges.push_back({ i, dest, min_weight });
-					total_weight += min_weight;
-
-					if (subset[root[i]] < subset[root[dest]])
+					if (graph.adjancency_matrix[src][dest] != 0)
 					{
-						root[root[i]] = root[dest];
-						subset[root[dest]] += subset[root[i]];
+						int srcComp = find(parent, src);
+						int destComp = find(parent, dest);
+
+						if (srcComp != destComp && graph.adjancency_matrix[src][dest] < minWeight) 
+						{
+							minWeight = graph.adjancency_matrix[src][dest];
+							minSrc = src;
+							minDest = dest;
+						}
 					}
-					else {
-						root[root[dest]] = root[i];
-						subset[root[i]] += subset[root[dest]];
-					}
-					components--;
 				}
-				cheapest[i] = INT_MAX;
+			}
+
+			if (minSrc != -1 && minDest != -1) 
+			{
+				mstTree.push_back({ minSrc, minDest, minWeight });
+				unionComp(parent, rank, minSrc, minDest);
 			}
 		}
 	}
 
+	int total_weight = 0;
+
+	for (const auto& edge : mstTree)
+		total_weight += edge.weight;
+
 	std::cout << "Остовное дерево:\n";
-	for (const auto& edge : mstEdges)
+	for (const auto& edge : mstTree)
 		std::cout << edge.src+1 << "-" << edge.dest+1 << "(" << edge.weight << ")\n";
 
 	std::cout << "Суммарный вес остовного дерева: " << total_weight;
 }
 
 
-void findMSTBr(std::vector<std::vector<int>> undirGraph,int num_of_vert)
+void findMSTBr(std::vector<std::vector<int>> graph, int num_of_vert)
 {
-	std::vector<Edge> mstEdges;
+	std::vector<Edge> mstTree;
 
-	std::vector<int> cheapest(num_of_vert, INT_MAX);
-	std::vector<int> root(num_of_vert);
-	std::vector<int> subset(num_of_vert, -1);
-
-	for (int i = 0; i < num_of_vert; ++i)
-		root[i] = i;
-
-	int components = num_of_vert;
-
-	int total_weight = 0;
-
-	while (components > 1)
+	while (mstTree.size() < num_of_vert - 1) 
 	{
-		for (int i = 0; i < num_of_vert; ++i)
-			for (int j = 0; j < num_of_vert; ++j)
-				if (undirGraph[i][j] != 0) {
-					int dest = j;
+		std::vector<int> parent(num_of_vert);
+		std::vector<int> rank(num_of_vert);
 
-					if (root[i] != root[dest] && undirGraph[i][j] < cheapest[root[i]])
-						cheapest[root[i]] = undirGraph[i][j];
-				}
-
-		for (int i = 0; i < num_of_vert; ++i)
+		for (int v = 0; v < num_of_vert; ++v) 
 		{
-			int cheapest_edge = cheapest[i];
-			if (cheapest_edge != INT_MAX)
+			parent[v] = v;
+			rank[v] = 0;
+		}
+
+		for (int comp = 0; comp < num_of_vert; ++comp) 
+		{
+			int minWeight = INT_MAX;
+			int minSrc = -1, minDest = -1;
+
+			for (int src = 0; src < num_of_vert; ++src) 
 			{
-				int dest = -1;
-				int min_weight = INT_MAX;
-				for (int j = 0; j < num_of_vert; ++j)
-					if (undirGraph[i][j] != 0)
-						if (root[i] != root[j] && undirGraph[i][j] == cheapest_edge)
-							if (undirGraph[i][j] < min_weight)
-							{
-								min_weight = undirGraph[i][j];
-								dest = j;
-							}
-
-				if (dest != -1)
+				for (int dest = 0; dest < num_of_vert; ++dest) 
 				{
-					mstEdges.push_back({ i, dest, min_weight });
-					total_weight += min_weight;
+					if (graph[src][dest] != 0) {
+						int srcComp = find(parent, src);
+						int destComp = find(parent, dest);
 
-					if (subset[root[i]] < subset[root[dest]])
-					{
-						root[root[i]] = root[dest];
-						subset[root[dest]] += subset[root[i]];
+						if (srcComp != destComp && graph[src][dest] < minWeight) 
+						{
+							minWeight = graph[src][dest];
+							minSrc = src;
+							minDest = dest;
+						}
 					}
-					else {
-						root[root[dest]] = root[i];
-						subset[root[i]] += subset[root[dest]];
-					}
-					components--;
 				}
-				cheapest[i] = INT_MAX;
+			}
+
+			if (minSrc != -1 && minDest != -1) 
+			{
+				mstTree.push_back({ minSrc, minDest, minWeight });
+				unionComp(parent, rank, minSrc, minDest);
 			}
 		}
 	}
 
+	int total_weight = 0;
+
+	for (const auto& edge : mstTree)
+		total_weight += edge.weight;
+
 	std::cout << "Остовное дерево:\n";
-	for (const auto& edge : mstEdges)
-		std::cout << edge.src+1 << "-" << edge.dest+1 << "(" << edge.weight << ")\n";
+	for (const auto& edge : mstTree)
+		std::cout << edge.src + 1 << "-" << edge.dest + 1 << "(" << edge.weight << ")\n";
 
 	std::cout << "Суммарный вес остовного дерева: " << total_weight;
 }
+
 
 
 
@@ -206,6 +203,7 @@ void findMSTKr(Graph graph)
 	int total_weight = 0;
 	int edge_counter = 0;
 
+	// перенос ребер в mst 
 	for (int i = 0; i <num_of_vert;++i)
 		for (int j = 0; j < num_of_vert; ++j)
 			if (graph.adjancency_matrix[i][j])

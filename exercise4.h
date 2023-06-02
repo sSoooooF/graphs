@@ -4,10 +4,6 @@
 
 void exercise4(Graph graph, int argc, const char* argv[]);
 
-int findRoot(std::vector<int>& parent, int v);
-
-void unionSets(std::vector<int>& parent, int root1, int root2);
-
 int findMinKeyVertex(std::vector<int>& key, std::vector<bool>& mst_vector, int num_of_vert);
 
 void findMSTBr(Graph graph);

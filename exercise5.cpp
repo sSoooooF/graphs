@@ -71,13 +71,23 @@ void exercise5(Graph graph, int argc, const char* argv[])
 
 	std::pair<std::vector<int>, int> answer = dijkstra(graph, startVertex-1, endVertex-1);
 
+	if (answer.second == INT_MAX)
+	{
+		std::cout << "Пути нет!";
+		return;
+	}
+
+
+
 	std::cout << "Кратчайший путь от вершины " << startVertex << " до вершины " << endVertex << ":\n";
 	for (int i = 0; i < answer.first.size(); ++i)
 	{
-		std::cout << answer.first[i];
+		std::cout << answer.first[i]+1;
 		if (i != answer.first.size() - 1)
 			std::cout << "->";
 	}
 	std::cout << "\nДлина геодезической цепи: " << answer.second;
+
+
 
 }

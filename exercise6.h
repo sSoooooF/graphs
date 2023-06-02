@@ -2,6 +2,8 @@
 #include "graph.h"
 #include <vector>
 
+bool hasNegativeCycle(Graph graph);
+
 std::vector<int> dijkstra(Graph graph, int start_vertex);
 
 std::vector<int> bellmanFordMoore(Graph graph, int start_vertex);
