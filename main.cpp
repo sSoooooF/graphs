@@ -52,6 +52,6 @@ void main(int argc, const char* argv[])
 	if (useAdjacencyList)
 		graph.readGraphAdjacency(filePath);
 
-	//graph.readGraphMatrix("task4/matrix_t2_001.txt");
-	exercise4(graph, argc, argv);
+
+	exercise2(graph/*, argc, argv*/);
 }

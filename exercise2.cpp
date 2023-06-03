@@ -64,7 +64,8 @@ bool isGraphConnected(std::vector<std::vector<int>> graph)
 	return true;
 }
 
-bool isStronglyConnected(Graph graph) {
+bool isStronglyConnected(Graph graph) 
+{
 	int n = graph.number_of_vertex;
 
 	std::vector<bool> visited(n, false);
@@ -72,17 +73,17 @@ bool isStronglyConnected(Graph graph) {
 	q.push(0);
 	visited[0] = true;
 
-	while (!q.empty()) {
+	while (!q.empty()) 
+	{
 		int curr = q.front();
 		q.pop();
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) 
 			if (graph.adjancency_matrix[curr][i] != 0 && !visited[i]) 
 			{
 				q.push(i);
 				visited[i] = true;
 			}
-		}
 	}
 
 	for (bool v : visited) 
@@ -102,13 +103,11 @@ bool isStronglyConnected(Graph graph) {
 			q.pop();
 
 			for (int j = 0; j < n; j++) 
-			{
 				if (graph.adjancency_matrix[curr][j] != 0 && !visited[j]) 
 				{
 					q.push(j);
 					visited[j] = true;
 				}
-			}
 		}
 
 		for (bool v : visited) 
@@ -122,7 +121,8 @@ bool isStronglyConnected(Graph graph) {
 }
 
 
-bool isWeaklyConnected(Graph graph) {
+bool isWeaklyConnected(Graph graph) 
+{
 	int n = graph.number_of_vertex;
 
 	std::vector<std::vector<int>> undirectedGraph(n, std::vector<int>(n, 0));
@@ -132,7 +132,7 @@ bool isWeaklyConnected(Graph graph) {
 		{
 				undirectedGraph[i][j] = 1;
 				undirectedGraph[j][i] = 1;
-			}
+		}
 
 	return isGraphConnected(undirectedGraph);
 }
@@ -173,7 +173,8 @@ std::vector<std::vector<int>> findConnectedComponents(Graph graph)
 	return components;
 }
 
-void DFS(int v, Graph graph, std::vector<bool>& visited, std::vector<int>& component) {
+void DFS(int v, Graph graph, std::vector<bool>& visited, std::vector<int>& component) 
+{
 	visited[v] = true;
 	component.push_back(v);
 
@@ -182,7 +183,8 @@ void DFS(int v, Graph graph, std::vector<bool>& visited, std::vector<int>& compo
 			DFS(neighbor, graph, visited, component);
 }
 
-void DFS(int v, std::vector<std::vector<int>>& graph, std::vector<bool>& visited, std::vector<int>& component) {
+void DFS(int v, std::vector<std::vector<int>>& graph, std::vector<bool>& visited, std::vector<int>& component) 
+{
 	visited[v] = true;
 	component.push_back(v);
 
@@ -191,7 +193,8 @@ void DFS(int v, std::vector<std::vector<int>>& graph, std::vector<bool>& visited
 			DFS(neighbor, graph, visited, component);
 }
 
-void fillOrder(int v, Graph graph, std::vector<bool>& visited, std::stack<int>& stack) {
+void fillOrder(int v, Graph graph, std::vector<bool>& visited, std::stack<int>& stack) 
+{
 	visited[v] = true;
 
 	for (int neighbor = 0; neighbor < graph.number_of_vertex; ++neighbor)
@@ -201,7 +204,8 @@ void fillOrder(int v, Graph graph, std::vector<bool>& visited, std::stack<int>& 
 	stack.push(v);
 }
 
-std::vector<std::vector<int>> getTranspose(Graph graph) {
+std::vector<std::vector<int>> getTranspose(Graph graph) 
+{
 	int num_of_vert = graph.number_of_vertex;
 	std::vector<std::vector<int>> transpose(num_of_vert, std::vector<int>(num_of_vert, 0));
 
@@ -213,7 +217,8 @@ std::vector<std::vector<int>> getTranspose(Graph graph) {
 	return transpose;
 }
 
-std::vector<std::vector<int>> findStronglyConnectedComponents(Graph graph) {
+std::vector<std::vector<int>> findStronglyConnectedComponents(Graph graph) 
+{
 	int num_vert = graph.number_of_vertex;
 
 	std::vector<bool> visited(num_vert, false);
@@ -258,7 +263,8 @@ void exercise2(Graph graph)
 		std::vector<std::vector<int>> components = findConnectedComponents(graph);
 		std::cout << "Number of components: " << components.size();
 		std::cout << "\nComponents: \n";
-		for (const auto& component : components) {
+		for (const auto& component : components) 
+		{
 			for (int v : component) 
 				std::cout << v+1 << " ";
 			std::cout << "\n";
