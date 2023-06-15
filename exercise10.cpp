@@ -31,7 +31,7 @@ bool bfs(std::vector<std::vector<int>>& residualGraph, std::vector<int>& parent,
 }
 
 
-int fordFalkerson(Graph graph, int source, int sink, std::vector<std::pair<int, int>>& flowEdges)
+std::pair<int, std::vector<std::vector<int>>> fordFalkerson(Graph graph, int source, int sink, std::vector<std::pair<int, int>>& flowEdges)
 {
     int numVertices = graph.number_of_vertex;
 
@@ -65,6 +65,7 @@ int fordFalkerson(Graph graph, int source, int sink, std::vector<std::pair<int, 
             int u = parent[v];
             residualGraph[u][v] -= pathFlow;
             residualGraph[v][u] += pathFlow;
+            flowEdges.push_back({ u,v });
         }
 
         // Увеличиваем значение общего потока
@@ -72,16 +73,17 @@ int fordFalkerson(Graph graph, int source, int sink, std::vector<std::pair<int, 
     }
 
     // Возвращаем общий поток
-    return maxFlow;
+    return { maxFlow, residualGraph };
 }
 
-
-void printFlowEdges(std::vector<std::pair<int, int>>& flowEdges) 
-{
+void printFlowEdges(const std::vector<std::pair<int, int>>& flowEdges, int** graph, std::vector<std::vector<int>> residualGraph) {
     std::cout << "Список ребер с указанием величины потока:\n";
-    for (const auto& edge : flowEdges) 
-    {
-        std::cout << edge.first << " -> " << edge.second << "\n";
+    for (const auto& edge : flowEdges) {
+        int u = edge.first;
+        int v = edge.second;
+        int capacity = graph[u][v];
+        int flow = capacity - residualGraph[u][v];
+        std::cout << u+1 << " " << v+1 << " " << flow << "/" << capacity << "\n";
     }
 }
 
@@ -108,8 +110,12 @@ void exercise10(Graph graph)
     }
 
     std::vector<std::pair<int, int>> flowEdges;
-    int maxFlow = fordFalkerson(graph, source, sink, flowEdges);
+    auto pr = fordFalkerson(graph, source, sink, flowEdges);
 
-    std::cout << maxFlow << " - maximum flow from.\n";
-    printFlowEdges(flowEdges);
+    int maxFlow = pr.first;
+    auto resid = pr.second;
+
+
+    std::cout << maxFlow << " - maximum flow from " << source+1 << " to " << sink+1 << ".\n";
+    printFlowEdges(flowEdges, graph.adjancency_matrix, resid);
 }

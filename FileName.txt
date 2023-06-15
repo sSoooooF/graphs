@@ -1,0 +1,199 @@
+std::vector<int> levit2(Graph& graph, int source) {
+    source--;
+    int vert_num = graph.adjacency_matrix()[0].size();
+    std::vector<std::vector<int>> adj_matrix = graph.adjacency_matrix();
+    std::vector<int> dist(vert_num, INF);
+    bool m0_not_empty = false;
+    std::vector<int> M0;
+    std::vector<int> M1;
+    std::vector<int> M1_urgent;
+    std::vector<int> M2;
+    std::vector<bool> state(vert_num, 0);
+    dist[source] = 0;
+    state[source] = 1;
+    M1_urgent.push_back(source);
+
+    int vert;
+
+    for (int i = 0; i < vert_num; i++) {
+        if (i != source) {
+            M0.push_back(i);
+        }
+    }
+
+
+    while (!M1.empty() || !M1_urgent.empty()) {
+        if (!M1_urgent.empty()) {
+            vert = M1_urgent.front();
+            M1_urgent.erase(std::remove(M1_urgent.begin(), M1_urgent.end(), vert), M1_urgent.end());
+            }
+        else if (!M1.empty()) {
+            vert = M1.front();
+            M1.erase(std::remove(M1.begin(), M1.end(), vert), M1.end());
+        }
+        std::vector<int> neighbors = graph.adjacency_list(vert);
+        for (const auto& neighbor : neighbors) {
+            std::vector<Edge> edges = graph.list_of_edges(vert);
+
+            if (std::find(M0.begin(), M0.end(), neighbor) != M0.end()) {
+                dist[neighbor] = dist[vert] + adj_matrix[vert][neighbor];
+                M0.erase(std::remove(M0.begin(), M0.end(), neighbor), M0.end());
+                M1.push_back(neighbor);
+            }
+
+            if (std::find(M1.begin(), M1.end(), neighbor) != M1.end() || std::find(M1_urgent.begin(), M1_urgent.end(), neighbor) != M1_urgent.end()) {
+                if (dist[neighbor] > dist[vert] + adj_matrix[vert][neighbor]) {
+                    dist[neighbor] = dist[vert] + adj_matrix[vert][neighbor]; 
+                }
+            }
+
+            if (std::find(M2.begin(), M2.end(), neighbor) != M2.end()) {
+                if (dist[neighbor] > dist[vert] + adj_matrix[vert][neighbor]) {
+                    dist[neighbor] = dist[vert] + adj_matrix[vert][neighbor];
+                    M2.erase(std::remove(M2.begin(), M2.end(), neighbor), M2.end());
+                    M1_urgent.push_back(neighbor);
+                }
+            }
+			
+        }
+        
+        M2.push_back(vert);
+    }
+
+    for (int i = 0; i < vert_num; i++) {
+        if (state[i] == 0) {
+            m0_not_empty = true;
+        }
+    }
+
+    //for (int vert = 0; vert < vert_num; vert++) {
+    //    for (int adj_vert = 0; adj_vert < vert_num; adj_vert++) {
+    //        if (adj_matrix[vert][adj_vert] != 0 && dist[adj_vert] != INF) {
+    //            if (dist[adj_vert] > dist[vert] + adj_matrix[vert][adj_vert])
+    //                return {};
+    //        }
+    //    }
+    //}
+
+    return dist;
+}
+
+
+
+
+
+void dijkstra(std::vector<std::vector<int>>& adj_matrix, int source, std::vector<int>& distances) {
+    source--;
+    int num_vert = adj_matrix[0].size();
+    std::vector<bool> visited(num_vert, false);
+    distances.resize(num_vert, INF);
+    distances[source] = 0;
+
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> queue;
+    queue.push(std::make_pair(0, source));
+
+    while (!queue.empty()) {
+        int closest_vert = queue.top().second;
+        queue.pop();
+
+        if (visited[closest_vert]) {
+            continue;
+        }
+        visited[closest_vert] = true;
+
+        for (int i = 0; i < num_vert; i++) {
+            if (adj_matrix[closest_vert][i] != 0 && distances[i] > distances[closest_vert] + adj_matrix[closest_vert][i]) {
+                distances[i] = distances[closest_vert] + adj_matrix[closest_vert][i];
+                queue.push(std::make_pair(distances[i], i));
+            }
+        }
+    }
+}
+
+void bellmanFord(std::vector<std::vector<int>>& adj_matrix, int source, std::vector<int>& distances) {
+    int num_vert = adj_matrix[0].size();
+    distances.resize(num_vert, INF);
+    distances[source] = 0;
+
+    for (int i = 0; i < num_vert - 1; i++) {
+        for (int j = 0; j < num_vert; j++) {
+            for (int k = 0; k < num_vert; k++) {
+                if (adj_matrix[j][k] != INF && j != k && distances[k] > distances[j] + adj_matrix[j][k]) {
+                    if (distances[k] == INF) {
+                        distances[k] = adj_matrix[j][k];
+                    }
+                    else {
+                        distances[k] = distances[j] + adj_matrix[j][k];
+                    }
+					
+				}
+			}
+		}
+	}
+    //negative cycle check
+    for (int j = 0; j < num_vert; j++) {
+        for (int k = 0; k < num_vert; k++) {
+            if (adj_matrix[j][k] != INF && j != k && distances[k] > distances[j] + adj_matrix[j][k]) {
+				std::cout << "Graph contains a negative cycle." << std::endl;
+				bellmanFordError = true;
+                return;
+			}
+		}
+	}
+}
+
+std::vector<std::vector<int>> johnson(Graph& graph) {
+    std::vector<std::vector<int>> adj_matrix = graph.adjacency_matrix();
+    int num_vert = adj_matrix[0].size();
+
+    for (int i = 0; i < num_vert; i++) {
+        for (int j = 0; j < num_vert; j++) {
+            if (adj_matrix[i][j] == 0) {
+                adj_matrix[i][j] = INF;
+            }
+        }
+    }
+
+    adj_matrix.push_back(std::vector<int>(num_vert, 0));
+    for (int i = 0; i < num_vert + 1; i++) {
+        adj_matrix[i].push_back(INF);
+    }
+
+    std::vector<int> h;
+    bellmanFord(adj_matrix, num_vert, h);
+    if (bellmanFordError) {
+        return std::vector<std::vector<int>>();
+    }
+
+    adj_matrix.pop_back();
+    for (int i = 0; i < num_vert; i++) {
+        adj_matrix[i].pop_back();
+    }
+
+    for (int i = 0; i < num_vert; i++) {
+        for (int j = 0; j < num_vert; j++) {
+            if (adj_matrix[i][j] != INF) {
+                adj_matrix[i][j] += h[i] - h[j];
+            }
+        }
+    }
+
+
+    std::vector<std::vector<int>> shortestPaths(num_vert, std::vector<int>(num_vert, 0));
+    for (int i = 0; i < num_vert; i++) {
+        std::vector<int> distances;
+        dijkstra(adj_matrix, i, distances);
+        for (int j = 0; j < num_vert; j++) {
+            if (distances[j] != INF) {
+                shortestPaths[i][j] = distances[j] + h[j] - h[i];
+            }
+            else {
+                shortestPaths[i][j] = distances[j];
+            }
+
+
+        }
+
+    }
+    return shortestPaths;
+}
