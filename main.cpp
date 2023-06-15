@@ -6,14 +6,17 @@
 #include "exercise5.h"
 #include "exercise6.h"
 #include "exercise7.h"
-#include"exercise9.h"
+#include "exercise8.h"
+#include "exercise9.h"
+#include "exercise10.h"
 #include <iostream>
+#include "map.h"
 
 void main(int argc, const char* argv[])
 {
 	setlocale(LC_ALL, "rus");
 	Graph graph;
-	
+
 	std::string filePath;
 	bool useEdgesList = false;
 	bool useMatrix = false;
@@ -55,6 +58,5 @@ void main(int argc, const char* argv[])
 		graph.readGraphAdjacency(filePath);
 
 
-
-	exercise4(graph, argc, argv);
+	exercise10(graph/*, argc, argv*/);
 }

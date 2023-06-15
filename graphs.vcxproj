@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="exercise10.cpp" />
     <ClCompile Include="exercise3.cpp" />
     <ClCompile Include="exercise1.cpp" />
     <ClCompile Include="exercise2.cpp" />
@@ -134,6 +135,8 @@
     <ClCompile Include="exercise5.cpp" />
     <ClCompile Include="exercise6.cpp" />
     <ClCompile Include="exercise7.cpp" />
+    <ClCompile Include="exercise8.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="exercise9.cpp" />
     <ClCompile Include="floydWarshallAlgorithm.cpp" />
     <ClCompile Include="graph.cpp" />
@@ -141,15 +144,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exercise1.h" />
+    <ClInclude Include="exercise10.h" />
     <ClInclude Include="exercise2.h" />
     <ClInclude Include="exercise3.h" />
     <ClInclude Include="exercise4.h" />
     <ClInclude Include="exercise5.h" />
     <ClInclude Include="exercise6.h" />
     <ClInclude Include="exercise7.h" />
+    <ClInclude Include="exercise8.h" />
     <ClInclude Include="exercise9.h" />
     <ClInclude Include="floydWarshallAlgorithm.h" />
     <ClInclude Include="graph.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="map.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

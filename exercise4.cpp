@@ -427,7 +427,7 @@ void exercise4(Graph graph, int argc, const char* argv[])
 	else
 	{
 		std::vector<std::vector<int>> 
-			Graph = convertToUndirectedGraph(graph);
+			undirGraph = convertToUndirectedGraph(graph);
 		if (algorithm == 1)
 			findMSTKr(undirGraph, graph.number_of_vertex);
 		if (algorithm == 2)

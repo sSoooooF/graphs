@@ -33,14 +33,14 @@ void Graph::readGraphAdjacency(std::string url)
 	adjancency_matrix = new int*[number_of_vertex];
 	for (int i = 0; i < number_of_vertex; i++)
 		adjancency_matrix[i] = new int[number_of_vertex];
+
 	file.open(url);
 	int counter = 0;
 	int c;
 	for (int i = 0; i < number_of_vertex; i++)
 		for (int j = 0; j < number_of_vertex; j++)
-			if (adjancency_matrix[i][j] != 1)
-				adjancency_matrix[i][j] = 0;
-	while (counter < 50)
+			adjancency_matrix[i][j] = 0;
+	while (counter < number_of_vertex)
 	{
 		std::getline(file, str);
 		std::istringstream iss(str);

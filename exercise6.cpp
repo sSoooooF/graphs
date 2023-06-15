@@ -4,6 +4,9 @@
 #include <queue>
 #include <string>
 
+
+#define INT_MAX 100000
+
 bool hasNegativeCycle(Graph graph)
 {
 	int num_of_vert = graph.number_of_vertex;
@@ -49,7 +52,7 @@ std::vector<int> dijkstra(Graph graph, int start_vertex)
 		visited[u] = true;
 
 		for (int i = 0; i < num_of_vert; ++i)
-			if (graph.adjancency_matrix[u][i] && distances[u] != INT_MAX && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
+			if (graph.adjancency_matrix[u][i] && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
 			{
 				distances[i] = distances[u] + graph.adjancency_matrix[u][i];
 				pq.push({ distances[i],i });
@@ -69,7 +72,7 @@ std::vector<int> bellmanFordMoore(Graph graph, int start_vertex)
 	for (int i = 0; i < num_of_vert - 1; ++i)
 		for (int j = 0; j < num_of_vert; ++j)
 			for (int v = 0; v < num_of_vert; ++v)
-				if (graph.adjancency_matrix[j][v] != 0 && distances[j] != INT_MAX && distances[j] + graph.adjancency_matrix[j][v] < distances[v])
+				if (graph.adjancency_matrix[j][v] != 0 && distances[j] + graph.adjancency_matrix[j][v] < distances[v])
 					distances[v] = distances[j] + graph.adjancency_matrix[j][v];
 
 	return distances;
@@ -77,39 +80,44 @@ std::vector<int> bellmanFordMoore(Graph graph, int start_vertex)
 
 std::vector<int> levit(Graph graph, int start_vertex)
 {
-	int num_of_vert = graph.number_of_vertex;
-	std::vector<int> distances(num_of_vert, INT_MAX);
-	std::vector<bool> visited(num_of_vert, false);
+	int n = graph.number_of_vertex; // Количество вершин в графе
 
-	distances[start_vertex] = 0;
+	std::vector<int> distance(n, INT_MAX);
+	std::vector<int> parent(n, -1);
+	std::vector<int> state(n, 2); // 2 - не посещена, 1 - в очереди, 0 - посещена
 
-	std::deque<int> q;
-	q.push_back(start_vertex);
+	std::queue<int> queue;
 
-	while (!q.empty())
-	{
-		int u = q.front();
-		q.pop_front();
+	distance[start_vertex] = 0;
+	queue.push(start_vertex);
+	state[start_vertex] = 1;
 
-		visited[u] = true;
+	while (!queue.empty()) {
+		int currentNode = queue.front();
+		queue.pop();
+		state[currentNode] = 0;
 
-		for (int i = 0; i < num_of_vert;++i)
-			if (graph.adjancency_matrix[u][i] != 0 && distances[u] != INT_MAX && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
-			{
-				distances[i] = distances[u] + graph.adjancency_matrix[u][i];
+		for (int i = 0; i < n; ++i) {
+			if (graph.adjancency_matrix[currentNode][i] != INT_MAX) {
+				int weight = graph.adjancency_matrix[currentNode][i];
 
-				if (!visited[i])
-				{
-					if (!q.empty() && distances[i] < distances[q.front()])
-						q.push_front(i);
-					else
-						q.push_back(i);
-					visited[i] = true;
+				if (distance[currentNode] + weight < distance[i]) {
+					distance[i] = distance[currentNode] + weight;
+					parent[i] = currentNode;
+
+					if (state[i] == 2) {
+						queue.push(i);
+						state[i] = 1;
+					}
+					else if (state[i] == 0) {
+						queue.push(i);
+						state[i] = 1;
+					}
 				}
 			}
+		}
 	}
-
-	return distances;
+	return distance;
 }
 
 void exercise6(Graph graph, int argc, const char* argv[])
