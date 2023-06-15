@@ -3,6 +3,8 @@
 #include <vector>
 #include <stack>
 #include "exercise2.h"
+#include "exercise4.h"
+#include "exercise3.h"
 
 #define MAX(a,b) a >= b ? a : b
 
@@ -173,6 +175,41 @@ std::vector<std::vector<int>> findConnectedComponents(Graph graph)
 	return components;
 }
 
+std::vector<std::vector<int>> findConnectedComponents(std::vector<std::vector<int>> graph, int num_of_vert)
+{
+	std::vector<bool> visited(num_of_vert, false);
+	std::vector<std::vector<int>> components;
+
+	for (int i = 0; i < num_of_vert; i++)
+	{
+		if (!visited[i])
+		{
+			std::vector<int> component;
+			std::queue<int> q;
+			q.push(i);
+			visited[i] = true;
+
+			while (!q.empty())
+			{
+				int curr = q.front();
+				q.pop();
+				component.push_back(curr);
+
+				for (int j = 0; j < num_of_vert; j++)
+					if (graph[curr][j] != 0 && !visited[j])
+					{
+						q.push(j);
+						visited[j] = true;
+					}
+			}
+
+			components.push_back(component);
+		}
+	}
+
+	return components;
+}
+
 void DFS(int v, Graph graph, std::vector<bool>& visited, std::vector<int>& component) 
 {
 	visited[v] = true;
@@ -285,8 +322,20 @@ void exercise2(Graph graph)
 				std::cout << "Digraph is not weakly connected.\n";
 		}
 
+		std::vector<std::vector<int>> gr = convertToUndirectedGraph(graph);
+
 		std::vector<std::vector<int>> strongComponents = findStronglyConnectedComponents(graph);
-		std::cout << "Number of strong components: " << strongComponents.size();
+		std::vector<std::vector<int>> comp = findConnectedComponents(gr, graph.number_of_vertex);
+		std::cout << "Number of components: " << comp.size();
+		std::cout << "\nStrong components: \n";
+		for (const auto& component : comp)
+		{
+			for (int v : component)
+				std::cout << v + 1 << " ";
+			std::cout << "\n";
+		}
+
+		std::cout << "\nNumber of strong components: " << strongComponents.size();
 		std::cout << "\nStrong components: \n";
 		for (const auto& component : strongComponents) 
 		{

@@ -215,7 +215,7 @@ void findMSTKr(Graph graph)
 				mstEdges.push_back(edge);
 			}
 
-	std::sort(mstEdges.begin(), mstEdges.end());
+	std::sort(mstEdges.begin(), mstEdges.end(), [](const Edge& a, const Edge& b) {return a.weight < b.weight; });
 
 	for (Edge& edge : mstEdges)
 	{
@@ -404,7 +404,7 @@ void exercise4(Graph graph, int argc, const char* argv[])
 		}
 	}
 
-	int time;
+	int timek, timep, timeb;
 
 	if (!graph.isDirected())
 	{
@@ -426,7 +426,8 @@ void exercise4(Graph graph, int argc, const char* argv[])
 	}
 	else
 	{
-		std::vector<std::vector<int>> undirGraph = convertToUndirectedGraph(graph);
+		std::vector<std::vector<int>> 
+			Graph = convertToUndirectedGraph(graph);
 		if (algorithm == 1)
 			findMSTKr(undirGraph, graph.number_of_vertex);
 		if (algorithm == 2)
@@ -436,15 +437,20 @@ void exercise4(Graph graph, int argc, const char* argv[])
 		if (algorithm == 4)
 		{
 			std::cout << "Kruskala\n";
-			time = clock();
+			timek = clock();
 			findMSTKr(undirGraph, graph.number_of_vertex);
-			std::cout << "\nВремя работы алгоритма Крускала " << clock()-time << "\n\nPrima\n";
-			time = clock();
+			timek = clock() - timek;
+			std::cout << "\n\nPrima\n";
+			timep = clock();
 			findMSTPr(undirGraph, graph.number_of_vertex);
-			std::cout << "\nВремя работы алгоритма Прима " << clock() - time << "\n\nBoruvka\n";
-			time = clock();
+			timep = clock() - timep;
+			std::cout << "\n\nBoruvka\n";
+			timeb = clock();
 			findMSTBr(undirGraph,graph.number_of_vertex);
-			std::cout << "\nВремя работы алгоритма Борувки " << clock() - time;
+			timeb = clock() - timeb;
+			std::cout << "\nВремя работы алгоритма Крускала " << timek;
+			std::cout << "\nВремя работы алгоритма Прима " << timep;
+			std::cout << "\nВремя работы алгоритма Борувки " << timeb;
 		}
 	}
 }

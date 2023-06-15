@@ -133,6 +133,8 @@
     <ClCompile Include="exercise4.cpp" />
     <ClCompile Include="exercise5.cpp" />
     <ClCompile Include="exercise6.cpp" />
+    <ClCompile Include="exercise7.cpp" />
+    <ClCompile Include="exercise9.cpp" />
     <ClCompile Include="floydWarshallAlgorithm.cpp" />
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
@@ -144,6 +146,8 @@
     <ClInclude Include="exercise4.h" />
     <ClInclude Include="exercise5.h" />
     <ClInclude Include="exercise6.h" />
+    <ClInclude Include="exercise7.h" />
+    <ClInclude Include="exercise9.h" />
     <ClInclude Include="floydWarshallAlgorithm.h" />
     <ClInclude Include="graph.h" />
   </ItemGroup>

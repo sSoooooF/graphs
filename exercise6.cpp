@@ -101,7 +101,7 @@ std::vector<int> levit(Graph graph, int start_vertex)
 				if (!visited[i])
 				{
 					if (!q.empty() && distances[i] < distances[q.front()])
-						q.push_back(i);
+						q.push_front(i);
 					else
 						q.push_back(i);
 					visited[i] = true;
@@ -154,13 +154,13 @@ void exercise6(Graph graph, int argc, const char* argv[])
 	switch (algorithm)
 	{
 	case 1:
-		answer = dijkstra(graph, start_vertex-1);
+		answer = dijkstra(graph, start_vertex);
 		break;
 	case 2:
-		answer = bellmanFordMoore(graph, start_vertex-1);
+		answer = bellmanFordMoore(graph, start_vertex);
 		break;
 	case 3:
-		answer = levit(graph, start_vertex-1);
+		answer = levit(graph, start_vertex);
 		break;
 	default:
 		std::cout << "Error: Invalid algorithm option.";
@@ -173,7 +173,7 @@ void exercise6(Graph graph, int argc, const char* argv[])
 	
 
 	
-	std::cout << "Distances from vertex " << start_vertex << ":\n";
+	std::cout << "Distances from vertex " << start_vertex+1 << ":\n";
 	for (int i = 0; i < answer.size(); ++i) {
 		if (answer[i] == INT_MAX) {
 			std::cout << "Vertex " << i+1 << ": INF\n";
