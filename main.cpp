@@ -9,6 +9,7 @@
 #include "exercise8.h"
 #include "exercise9.h"
 #include "exercise10.h"
+#include "exercise11.h"
 #include <iostream>
 #include "map.h"
 
@@ -58,5 +59,5 @@ void main(int argc, const char* argv[])
 		graph.readGraphAdjacency(filePath);
 
 
-	exercise10(graph/*, argc, argv*/);
+	exercise11(graph/*, argc, argv*/);
 }
