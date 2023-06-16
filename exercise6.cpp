@@ -3,19 +3,15 @@
 #include <vector>
 #include <queue>
 #include <string>
+#include <limits>
 
-
-#define INT_MAX 100000
+#define INT_MAX std::numeric_limits<int>::max()
 
 bool hasNegativeCycle(Graph graph)
 {
 	int num_of_vert = graph.number_of_vertex;
 
-	int** distances = new int* [num_of_vert];
-	for (int i = 0; i < num_of_vert; ++i)
-		distances[i] = new int[num_of_vert];
-
-	distances = graph.adjancency_matrix;
+	int **distances = graph.adjancency_matrix;
 
 	for (int k = 0; k < num_of_vert; ++k)
 		for (int i = 0; i < num_of_vert; ++i)
@@ -30,93 +26,106 @@ bool hasNegativeCycle(Graph graph)
 }
 
 
-std::vector<int> dijkstra(Graph graph, int start_vertex)
+std::vector<int> dijkstra(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
 {
-	int num_of_vert = graph.number_of_vertex;
-	std::vector<int> distances(num_of_vert, INT_MAX);
-	std::vector<bool> visited(num_of_vert, false);
+	int numVertices = graph.size();
+	std::vector<bool> visited(numVertices, false); // Посещенные вершины
 
-	distances[start_vertex] = 0;
+	distance[startVertex] = 0; // Расстояние до стартовой вершины равно 0
 
-	std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-	pq.push({ distances[start_vertex] ,start_vertex});
-
-	while (!pq.empty())
+	for (int i = 0; i < numVertices - 1; ++i)
 	{
-		int u = pq.top().second;
-		pq.pop();
+		int minDistance = INT_MAX;
+		int minVertex = -1;
 
-		if (visited[u])
-			continue;
-
-		visited[u] = true;
-
-		for (int i = 0; i < num_of_vert; ++i)
-			if (graph.adjancency_matrix[u][i] && distances[u] + graph.adjancency_matrix[u][i] < distances[i])
+		// Находим вершину с минимальным расстоянием
+		for (int j = 0; j < numVertices; ++j)
+		{
+			if (!visited[j] && distance[j] < minDistance)
 			{
-				distances[i] = distances[u] + graph.adjancency_matrix[u][i];
-				pq.push({ distances[i],i });
+				minDistance = distance[j];
+				minVertex = j;
 			}
+		}
+
+		if (minVertex == -1)
+			break;
+
+		visited[minVertex] = true;
+
+		// Обновляем расстояния до смежных вершин
+		for (int j = 0; j < numVertices; ++j)
+		{
+			if (!visited[j] && graph[minVertex][j] != INT_MAX && distance[minVertex] != INT_MAX
+				&& distance[minVertex] + graph[minVertex][j] < distance[j])
+			{
+				distance[j] = distance[minVertex] + graph[minVertex][j];
+			}
+		}
 	}
 
-	return distances;
+	return distance;
 }
 
-std::vector<int> bellmanFordMoore(Graph graph, int start_vertex)
+std::vector<int> bellmanFordMoore(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
 {
-	int num_of_vert = graph.number_of_vertex;
-	std::vector<int> distances(num_of_vert, INT_MAX);
+	int numVertices = graph.size();
 
-	distances[start_vertex] = 0;
+	distance[startVertex] = 0; // Расстояние до стартовой вершины равно 0
 
-	for (int i = 0; i < num_of_vert - 1; ++i)
-		for (int j = 0; j < num_of_vert; ++j)
-			for (int v = 0; v < num_of_vert; ++v)
-				if (graph.adjancency_matrix[j][v] != 0 && distances[j] + graph.adjancency_matrix[j][v] < distances[v])
-					distances[v] = distances[j] + graph.adjancency_matrix[j][v];
-
-	return distances;
-}
-
-std::vector<int> levit(Graph graph, int start_vertex)
-{
-	int n = graph.number_of_vertex; // Количество вершин в графе
-
-	std::vector<int> distance(n, INT_MAX);
-	std::vector<int> parent(n, -1);
-	std::vector<int> state(n, 2); // 2 - не посещена, 1 - в очереди, 0 - посещена
-
-	std::queue<int> queue;
-
-	distance[start_vertex] = 0;
-	queue.push(start_vertex);
-	state[start_vertex] = 1;
-
-	while (!queue.empty()) {
-		int currentNode = queue.front();
-		queue.pop();
-		state[currentNode] = 0;
-
-		for (int i = 0; i < n; ++i) {
-			if (graph.adjancency_matrix[currentNode][i] != INT_MAX) {
-				int weight = graph.adjancency_matrix[currentNode][i];
-
-				if (distance[currentNode] + weight < distance[i]) {
-					distance[i] = distance[currentNode] + weight;
-					parent[i] = currentNode;
-
-					if (state[i] == 2) {
-						queue.push(i);
-						state[i] = 1;
-					}
-					else if (state[i] == 0) {
-						queue.push(i);
-						state[i] = 1;
-					}
+	for (int i = 0; i < numVertices - 1; ++i)
+	{
+		for (int j = 0; j < numVertices; ++j)
+		{
+			for (int k = 0; k < numVertices; ++k)
+			{
+				if (graph[j][k] != INT_MAX && distance[j] != INT_MAX && distance[j] + graph[j][k] < distance[k])
+				{
+					distance[k] = distance[j] + graph[j][k];
 				}
 			}
 		}
 	}
+
+	return distance;
+}
+
+std::vector<int> levit(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
+{
+	int numVertices = graph.size();
+	std::vector<int> level(numVertices, INT_MAX); // Уровень каждой вершины
+	std::queue<int> queue;
+	std::vector<int> inQueue(numVertices, false); // Вершины, находящиеся в очереди
+
+	distance[startVertex] = 0; // Расстояние до стартовой вершины равно 0
+	level[startVertex] = 0; // Уровень стартовой вершины равен 0
+
+	queue.push(startVertex);
+	inQueue[startVertex] = true;
+
+	while (!queue.empty())
+	{
+		int currentVertex = queue.front();
+		queue.pop();
+		inQueue[currentVertex] = false;
+
+		// Обновляем расстояния до смежных вершин
+		for (int i = 0; i < numVertices; ++i)
+		{
+			if (graph[currentVertex][i] != INT_MAX && distance[currentVertex] != INT_MAX
+				&& distance[currentVertex] + graph[currentVertex][i] < distance[i])
+			{
+				distance[i] = distance[currentVertex] + graph[currentVertex][i];
+
+				if (!inQueue[i])
+				{
+					queue.push(i);
+					inQueue[i] = true;
+				}
+			}
+		}
+	}
+
 	return distance;
 }
 
@@ -151,7 +160,7 @@ void exercise6(Graph graph, int argc, const char* argv[])
 		}
 	}
 
-	std::vector<int> answer;
+	std::vector<int> distance(graph.number_of_vertex, INT_MAX);
 
 	if (hasNegativeCycle(graph))
 	{
@@ -159,35 +168,38 @@ void exercise6(Graph graph, int argc, const char* argv[])
 		return;
 	}
 
+	std::vector<std::vector<int>> grap(graph.number_of_vertex, std::vector<int>(graph.number_of_vertex, INT_MAX));
+
+	for (int i = 0; i < graph.number_of_vertex; ++i)
+		for (int j = 0; j < graph.number_of_vertex; ++j)
+			if (graph.adjancency_matrix[i][j] != 0 || i == j)
+				grap[i][j] = graph.adjancency_matrix[i][j];
+
+
 	switch (algorithm)
 	{
 	case 1:
-		answer = dijkstra(graph, start_vertex);
+		dijkstra(grap, start_vertex, distance);
 		break;
 	case 2:
-		answer = bellmanFordMoore(graph, start_vertex);
+		bellmanFordMoore(grap, start_vertex, distance);
 		break;
 	case 3:
-		answer = levit(graph, start_vertex);
+		levit(grap, start_vertex, distance);
 		break;
 	default:
 		std::cout << "Error: Invalid algorithm option.";
 		return;
 	}
 
-	/*int start_vertex = 6;
-	std::vector<int> answer = levit(graph, start_vertex-1);*/
-
-	
-
 	
 	std::cout << "Distances from vertex " << start_vertex+1 << ":\n";
-	for (int i = 0; i < answer.size(); ++i) {
-		if (answer[i] == INT_MAX) {
+	for (int i = 0; i < distance.size(); ++i) {
+		if (distance[i] == INT_MAX) {
 			std::cout << "Vertex " << i+1 << ": INF\n";
 		}
 		else {
-			std::cout << "Vertex " << i+1 << ": " << answer[i] << "\n";
+			std::cout << "Vertex " << i+1 << ": " << distance[i] << "\n";
 		}
 	}
 }
