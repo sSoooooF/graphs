@@ -31,7 +31,7 @@ bool bfs(std::vector<std::vector<int>>& residualGraph, std::vector<int>& parent,
 }
 
 
-std::pair<int, std::vector<std::vector<int>>> fordFalkerson(Graph graph, int source, int sink, std::vector<std::pair<int, int>>& flowEdges)
+std::pair<int, std::vector<std::vector<int>>> fordFalkerson(Graph graph, int source, int sink)
 {
     int numVertices = graph.number_of_vertex;
 
@@ -48,7 +48,8 @@ std::pair<int, std::vector<std::vector<int>>> fordFalkerson(Graph graph, int sou
     int maxFlow = 0;
 
     // Поиск пути в остаточной сети с помощью обхода в ширину
-    std::vector<int> parent(numVertices);
+    std::vector<int> parent(numVertices, -1);
+
     while (bfs(residualGraph, parent, source, sink)) 
     {
         // Находим минимальную пропускную способность ребер на найденном пути
@@ -65,25 +66,29 @@ std::pair<int, std::vector<std::vector<int>>> fordFalkerson(Graph graph, int sou
             int u = parent[v];
             residualGraph[u][v] -= pathFlow;
             residualGraph[v][u] += pathFlow;
-            flowEdges.push_back({ u,v });
         }
 
         // Увеличиваем значение общего потока
         maxFlow += pathFlow;
     }
-
     // Возвращаем общий поток
     return { maxFlow, residualGraph };
 }
 
-void printFlowEdges(const std::vector<std::pair<int, int>>& flowEdges, int** graph, std::vector<std::vector<int>> residualGraph) {
+void printFlowEdges(int** graph, std::vector<std::vector<int>> residualGraph) {
     std::cout << "Список ребер с указанием величины потока:\n";
-    for (const auto& edge : flowEdges) {
-        int u = edge.first;
-        int v = edge.second;
-        int capacity = graph[u][v];
-        int flow = capacity - residualGraph[u][v];
-        std::cout << u+1 << " " << v+1 << " " << flow << "/" << capacity << "\n";
+    for (int u = 0; u < residualGraph.size(); u++) {
+        for (int v = 0; v < residualGraph[u].size(); v++) {
+            if (graph[u][v] > 0) {
+                // Если есть ребро в графе, добавляем его в список
+                int flow = graph[u][v] - residualGraph[u][v];
+                std::cout << u + 1 << " " << v + 1 << " " << flow << "/" << graph[u][v] << "\n";
+            }
+            else if (graph[v][u] == 0 && residualGraph[v][u] > 0) {
+                // Если прямой поток равен нулю, но есть обратный поток, добавляем его в список
+                std::cout << u + 1 << " " << v + 1 << " " << residualGraph[v][u] << "/" << graph[v][u] << "\n";
+            }
+        }
     }
 }
 
@@ -109,13 +114,13 @@ void exercise10(Graph graph)
             sink = i;
     }
 
-    std::vector<std::pair<int, int>> flowEdges;
-    auto pr = fordFalkerson(graph, source, sink, flowEdges);
+    auto pr = fordFalkerson(graph, source, sink);
 
     int maxFlow = pr.first;
     auto resid = pr.second;
 
+    
 
     std::cout << maxFlow << " - maximum flow from " << source+1 << " to " << sink+1 << ".\n";
-    printFlowEdges(flowEdges, graph.adjancency_matrix, resid);
+    printFlowEdges(graph.adjancency_matrix, resid);
 }

@@ -7,6 +7,16 @@
 
 #define INT_MAX 100000
 
+struct Edge
+{
+	int source;
+	int dest;
+	int weight;
+
+	Edge(int src, int dest, int w) : source(src), dest(dest), weight(w) {};
+};
+
+
 bool hasNegativeCycle(Graph graph)
 {
 	int num_of_vert = graph.number_of_vertex;
@@ -78,46 +88,74 @@ std::vector<int> bellmanFordMoore(Graph graph, int start_vertex)
 	return distances;
 }
 
-std::vector<int> levit(Graph graph, int start_vertex)
-{
-	int n = graph.number_of_vertex; // Количество вершин в графе
+std::vector<int> levit(Graph graph, int source) {
+	source--;
+	int vert_num = graph.number_of_vertex;
+	std::vector<int> dist(vert_num, INT_MAX);
+	bool m0_not_empty = false;
+	std::vector<int> M0;
+	std::vector<int> M1;
+	std::vector<int> M1_urgent;
+	std::vector<int> M2;
+	std::vector<bool> state(vert_num, 0);
+	dist[source] = 0;
+	state[source] = 1;
+	M1_urgent.push_back(source);
 
-	std::vector<int> distance(n, INT_MAX);
-	std::vector<int> parent(n, -1);
-	std::vector<int> state(n, 2); // 2 - не посещена, 1 - в очереди, 0 - посещена
+	int vert;
 
-	std::queue<int> queue;
-
-	distance[start_vertex] = 0;
-	queue.push(start_vertex);
-	state[start_vertex] = 1;
-
-	while (!queue.empty()) {
-		int currentNode = queue.front();
-		queue.pop();
-		state[currentNode] = 0;
-
-		for (int i = 0; i < n; ++i) {
-			if (graph.adjancency_matrix[currentNode][i] != INT_MAX) {
-				int weight = graph.adjancency_matrix[currentNode][i];
-
-				if (distance[currentNode] + weight < distance[i]) {
-					distance[i] = distance[currentNode] + weight;
-					parent[i] = currentNode;
-
-					if (state[i] == 2) {
-						queue.push(i);
-						state[i] = 1;
-					}
-					else if (state[i] == 0) {
-						queue.push(i);
-						state[i] = 1;
-					}
-				}
-			}
+	for (int i = 0; i < vert_num; i++) {
+		if (i != source) {
+			M0.push_back(i);
 		}
 	}
-	return distance;
+
+
+	while (!M1.empty() || !M1_urgent.empty()) {
+		if (!M1_urgent.empty()) {
+			vert = M1_urgent.front();
+			M1_urgent.erase(std::remove(M1_urgent.begin(), M1_urgent.end(), vert), M1_urgent.end());
+		}
+		else if (!M1.empty()) {
+			vert = M1.front();
+			M1.erase(std::remove(M1.begin(), M1.end(), vert), M1.end());
+		}
+		std::vector<int> neighbors = graph.printAdjancencyList(vert);
+		for (const auto& neighbor : neighbors) {
+			std::vector<Edgeloh> edges = graph.printListOfEdges(vert);
+
+			if (std::find(M0.begin(), M0.end(), neighbor) != M0.end()) {
+				dist[neighbor] = dist[vert] + graph.adjancency_matrix[vert][neighbor];
+				M0.erase(std::remove(M0.begin(), M0.end(), neighbor), M0.end());
+				M1.push_back(neighbor);
+			}
+
+			if (std::find(M1.begin(), M1.end(), neighbor) != M1.end() || std::find(M1_urgent.begin(), M1_urgent.end(), neighbor) != M1_urgent.end()) {
+				if (dist[neighbor] > dist[vert] + graph.adjancency_matrix[vert][neighbor]) {
+					dist[neighbor] = dist[vert] + graph.adjancency_matrix[vert][neighbor];
+				}
+			}
+
+			if (std::find(M2.begin(), M2.end(), neighbor) != M2.end()) {
+				if (dist[neighbor] > dist[vert] + graph.adjancency_matrix[vert][neighbor]) {
+					dist[neighbor] = dist[vert] + graph.adjancency_matrix[vert][neighbor];
+					M2.erase(std::remove(M2.begin(), M2.end(), neighbor), M2.end());
+					M1_urgent.push_back(neighbor);
+				}
+			}
+
+		}
+
+		M2.push_back(vert);
+	}
+
+	for (int i = 0; i < vert_num; i++) {
+		if (state[i] == 0) {
+			m0_not_empty = true;
+		}
+	}
+
+	return dist;
 }
 
 void exercise6(Graph graph, int argc, const char* argv[])

@@ -6,154 +6,186 @@
 #include <string>
 
 
-const double alpha = 1.0;
-const double beta = 5.0;
+const double alpha = 1.0; // феромоны
+const double beta = 3.4; // видимость (эвристика)
+const double p = 0.3; // испарение
+const double q = 1.0; // Количество феромонов
 
 
-struct Edge
+// Функция для вывода маршрута
+void printPath(const std::vector<int>& path, Graph graph) 
 {
-	int source;
-	int destination;
-    int weight;
-};
-
-// инициализации феромона на ребрах
-std::vector<std::vector<double>> initializePheromones(int numvert) 
-{
-	std::vector<std::vector<double>> pheromones(numvert, std::vector<double>(numvert, 0.1));
-	return pheromones;
-}
-
-std::vector<Edge> initializeGraph(Graph grap) 
-{
-    int numVertices = grap.number_of_vertex;
-    std::vector<Edge> graph;
-
-    for (int i = 0; i < numVertices; ++i) {
-        for (int j = i + 1; j < numVertices; ++j) {
-            if (grap.adjancency_matrix[i][j] > 0) {
-                graph.push_back({ i, j, grap.adjancency_matrix[i][j] });
-            }
-        }
-    }
-
-    return graph;
-}
-
-// выбор следующей вершины
-int getNextVertex(std::vector<Edge>& graph, std::vector<std::vector<double>>& pheromones, std::vector<bool>& visited, int currentVertex)
-{
-    double total = 0.0;
-    int numVertices = pheromones.size();
-
-    for (const auto& edge : graph)
-        if (edge.source == currentVertex && !visited[edge.destination]) 
+    int size = path.size();
+    for (int i = 0; i < size-1; ++i)
+        if (graph.adjancency_matrix[path[i]][path[i + 1]] == 0)
         {
-            total += std::pow(pheromones[edge.source][edge.destination], alpha) *
-                std::pow(1.0 / graph[edge.source].weight, beta);
+            std::cout << "Нет гамильтонова цикла\n";
+            exit(0);
         }
+    for (int i = 0; i < size-1; ++i) 
+    {
+        std::cout << path[i]+1 << " - " << path[i+1]+1 << " " << graph.adjancency_matrix[path[i]][path[i+1]] << std::endl;
+    }
+}
 
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    double random = distribution(generator);
+
+// Функция для расчета следующей вершины для посещения
+int getNextVert(int currentVert, const std::vector<std::vector<double>>& visibility, const std::vector<std::vector<double>>& pheromones, const std::vector<bool>& visited) {
+    int numVert = visibility.size();
+    double sum = 0.0;
+
+    std::vector<double> probabilities(numVert, 0.0);
+    int numAvailableVert = 0;
+
+    for (int i = 0; i < numVert; ++i) 
+    {
+        if (i == currentVert || visited[i]) {
+            probabilities[i] = 0.0;
+        }
+        else {
+            probabilities[i] = pow(pheromones[currentVert][i], alpha) * pow(visibility[currentVert][i], beta);
+            sum += probabilities[i];
+            numAvailableVert++;
+        }
+    }
+
+    if (numAvailableVert == 0) {
+        // Если нет, выбираем случайную непосещенную вершину
+        for (int i = 0; i < numVert; ++i) {
+            if (!visited[i]) {
+                return i;
+            }
+        }
+    }
+
+    double random = (double)rand() / RAND_MAX;
     double cumulativeProbability = 0.0;
+    for (int i = 0; i < numVert; ++i) 
+    {
+        if (i == currentVert)
+            continue;
 
-    for (const auto& edge : graph) {
-        if (edge.source == currentVertex && !visited[edge.destination]) {
-            double probability = (std::pow(pheromones[edge.source][edge.destination], alpha) *
-                std::pow(1.0 / graph[edge.source].weight, beta)) / total;
-            cumulativeProbability += probability;
+        cumulativeProbability += probabilities[i] / sum;
 
-            if (random <= cumulativeProbability)
-                return edge.destination;
-        }
+        if (random <= cumulativeProbability)
+            return i;
     }
 
-    return -1;  // Нет доступных вершин
+    return -1;  // что-то пошло не так
 }
 
-void updatePheromones(std::vector<std::vector<double>>& pheromones, std::vector<Edge>& graph, std::vector<std::vector<int>>& paths)
-{
-    int numVertices = pheromones.size();
 
-    for (auto& row : pheromones) {
-        for (auto& pheromone : row) {
-            pheromone *= (1.0 - 0.1);  // Испарение феромона
+// Функция для обновления феромонов на ребрах
+void updatePheromones(std::vector<std::vector<double>>& pheromones, const std::vector<std::vector<int>>& antPaths) {
+    int numVert = pheromones.size();
+    int numAnts = antPaths.size();
+
+    for (int i = 0; i < numVert; ++i)
+    {
+        for (int j = 0; j < numVert; ++j) 
+        {
+            if (i == j)
+                continue;
+
+            pheromones[i][j] *= (1.0 - p);
         }
     }
 
-    for (const auto& antPath : paths) {
-        double pathLength = 0.0;
-
-        for (size_t i = 0; i < antPath.size() - 1; ++i) {
-            int source = antPath[i];
-            int destination = antPath[i + 1];
-            pathLength += graph[source].weight;
-        }
-
-        for (size_t i = 0; i < antPath.size() - 1; ++i) {
-            int source = antPath[i];
-            int destination = antPath[i + 1];
-            pheromones[source][destination] += 1.0 / pathLength;
-            pheromones[destination][source] += 1.0 / pathLength;
+    for (int k = 0; k < numAnts; ++k) 
+    {
+        int pathSize = antPaths[k].size();
+        for (int i = 0; i < pathSize - 1; ++i) 
+        {
+            int from = antPaths[k][i];
+            int to = antPaths[k][i + 1];
+            pheromones[from][to] += q;
+            pheromones[to][from] += q;
         }
     }
 }
 
-std::vector<int> findHamiltonianCycle(Graph gr, std::vector<Edge>& graph, int startVertex)
-{
-    int numVertices = gr.number_of_vertex;
-    std::vector<std::vector<double>> pheromones = initializePheromones(numVertices);
-    std::vector<std::vector<int>> antPaths(numVertices, std::vector<int>(numVertices));
-    std::vector<bool> visited(numVertices);
-    std::vector<int> hamiltonianPath;
-    int iteration = 0;
+// Основная функция для поиска гамильтонова пути с использованием муравьиной колонии
+std::vector<int> findHamiltonianPath(std::vector<std::vector<int>> graph, int startVertex) {
+    int numVert = graph.size();
 
-    int maxiter = numVertices * numVertices;
+    std::vector<std::vector<double>> pheromones(numVert, std::vector<double>(numVert, 1.0));
+    std::vector<std::vector<double>> visibility(numVert, std::vector<double>(numVert, 0.0));
+    for (int i = 0; i < numVert; ++i) 
+    {
+        for (int j = 0; j < numVert; ++j) 
+        {
+            if (i == j) 
+            {
+                visibility[i][j] = 0.0;
+            }
+            else 
+            {
+                visibility[i][j] = 1.0 / graph[i][j];
+            }
+        }
+    }
 
-    while (iteration < maxiter) {
-        for (int ant = 0; ant < numVertices; ++ant) {
-            visited.assign(numVertices, false);
-            antPaths[ant][0] = startVertex;
-            visited[startVertex] = true;
+    std::vector<int> bestPath;
+    double bestPathLength = std::numeric_limits<double>::max();
 
-            for (int i = 1; i < numVertices; ++i) {
-                int currentVertex = antPaths[ant][i - 1];
-                int nextVertex = getNextVertex(graph, pheromones, visited, currentVertex);
+    for (int iter = 0; iter < numVert*numVert; ++iter) 
+    {
+        std::vector<std::vector<int>> antPaths;
 
-                if (nextVertex == -1) {
-                    break;  // Все вершины посещены
-                }
+        for (int ant = 0; ant < numVert; ++ant) 
+        {
+            std::vector<int> path;
+            std::vector<bool> visited(numVert, false);
+            int currentVert = startVertex;
 
-                antPaths[ant][i] = nextVertex;
-                visited[nextVertex] = true;
+            path.push_back(currentVert);
+            visited[currentVert] = true;
+
+            for (int i = 0; i < numVert - 1; ++i) 
+            {
+                int nextCity = getNextVert(currentVert, visibility, pheromones, visited);
+                path.push_back(nextCity);
+                visited[nextCity] = true;
+                currentVert = nextCity;
+            }
+            // Добавляем начальную вершину в конец пути для формирования замкнутого цикла
+            path.push_back(startVertex);
+
+            antPaths.push_back(path);
+        }
+
+        // Находим лучший маршрут среди муравьев
+        double minPathLength = std::numeric_limits<double>::max();
+        int minPathIndex = -1;
+        for (int i = 0; i < numVert; ++i) 
+        {
+            double pathLength = 0.0;
+            int pathSize = antPaths[i].size();
+            for (int j = 0; j < pathSize - 1; ++j) 
+            {
+                int from = antPaths[i][j];
+                int to = antPaths[i][j + 1];
+                pathLength += graph[from][to];
+            }
+            if (pathLength < minPathLength) 
+            {
+                minPathLength = pathLength;
+                minPathIndex = i;
             }
         }
 
-        updatePheromones(pheromones, graph, antPaths);
-
-        ++iteration;
-    }
-
-    double shortestPathLength = std::numeric_limits<double>::max();
-
-    for (const auto& antPath : antPaths) {
-        double pathLength = 0.0;
-
-        for (size_t i = 0; i < antPath.size() - 1; ++i) {
-            int source = antPath[i];
-            int destination = antPath[i + 1];
-            pathLength += graph[source].weight;
+        // Обновляем лучший путь, если найден новый
+        if (minPathLength < bestPathLength) 
+        {
+            bestPathLength = minPathLength;
+            bestPath = antPaths[minPathIndex];
         }
 
-        if (pathLength < shortestPathLength) {
-            shortestPathLength = pathLength;
-            hamiltonianPath = antPath;
-        }
+        // Обновляем феромоны на ребрах
+        updatePheromones(pheromones, antPaths);
     }
 
-    return hamiltonianPath;
+    return bestPath;
 }
 
 
@@ -170,20 +202,17 @@ void exercise9(Graph graph, int argc, const char* argv[])
         }
     }
 
-    std::vector<Edge> newgraph = initializeGraph(graph);
+    std::vector<std::vector<int>> grap(graph.number_of_vertex, std::vector<int>(graph.number_of_vertex, 1000000));
+    for (int i = 0; i < graph.number_of_vertex; ++i)
+        for (int j = 0; j < graph.number_of_vertex; ++j)
+            if (graph.adjancency_matrix[i][j] != 0)
+                grap[i][j] = graph.adjancency_matrix[i][j];
 
+    srand(time(0));
+   
 
-    std::vector<int> answer = findHamiltonianCycle(graph, newgraph, start_vertex);
-    if (answer.empty()) {
-        std::cout << "Гамильтонов цикл не найден." << std::endl;
-    }
-    else {
-        std::cout << "Hamiltonian cycle:" << std::endl;
-        for (size_t i = 0; i < answer.size() - 1; ++i) {
-            int source = answer[i];
-            int destination = answer[i + 1];
-            int weight = newgraph[source].weight;
-            std::cout << source << " - " << destination << " " << weight << std::endl;
-        }
-    }
+    std::vector<int> hamiltonPath = findHamiltonianPath(grap, start_vertex);
+
+    std::cout << "Hamiltonian cycle:\n";
+    printPath(hamiltonPath, graph);
 }

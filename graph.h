@@ -1,6 +1,15 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <vector>
+
+struct Edgeloh
+{
+	int source;
+	int desst;
+	int weight;
+};
+
 
 class Graph {
 public:
@@ -14,8 +23,8 @@ public:
 	int weight(int vi, int vj);	// возвращает вес ребра
 	bool isEdge(int vi, int vj);	// есть ли ребро между vi и vj
 	void printAdjancencyMatrix();	// вывод матрицы смежности
-	void printAdjancencyList(int v);	// вывод списка смжености ля вершины v
+	std::vector<int> printAdjancencyList(int v);	// вывод списка смжености ля вершины v
 	void printListOfEdges();	// вывод списка ребер
-	void printListOfEdges(int v);	// вывод списка ребер вершины v
+	std::vector<Edgeloh> printListOfEdges(int v);	// вывод списка ребер вершины v
 	bool isDirected();			// граф ориентированный?
 }; // class Graph

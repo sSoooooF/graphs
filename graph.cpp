@@ -122,13 +122,15 @@ void Graph::printAdjancencyMatrix()
 	else isCreated();
 }
 
-void Graph::printAdjancencyList(int v) 
+std::vector<int> Graph::printAdjancencyList(int v) 
 {
-	std::cout << "List of ajancency vertex for vertex number " << v << ": ";
+	std::vector<int> adj_list;
 	for (int j = 0; j < number_of_vertex; j++) 
 	{
-		if (adjancency_matrix[v][j] != 0) std::cout << j + 1 << ", ";
+		if (adjancency_matrix[v][j] != 0)
+			adj_list.push_back(j);
 	}
+	return adj_list;
 }
 
 void Graph::printListOfEdges()
@@ -139,11 +141,13 @@ void Graph::printListOfEdges()
 				std::cout << i << "-" << j << " - ребро\n";
 }
 
-void Graph::printListOfEdges(int v)
+std::vector<Edgeloh> Graph::printListOfEdges(int v)
 {
+	std::vector<Edgeloh> edges;
 	for (int i = 0; i < number_of_vertex; i++)
 		if (adjancency_matrix[v][i] != 0)
-			std::cout << v << "-" << i << " - ребро\n";
+			edges.push_back({ v ,i, adjancency_matrix[v][i] });
+	return edges;
 }
 
 bool Graph::isDirected() 
