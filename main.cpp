@@ -59,5 +59,5 @@ void main(int argc, const char* argv[])
 		graph.readGraphAdjacency(filePath);
 
 
-	exercise7(graph/*, argc, argv*/);
+	exercise11(graph/*, argc, argv*/);
 }

@@ -15,6 +15,9 @@ const double q = 1.0; // Количество феромонов
 // Функция для вывода маршрута
 void printPath(const std::vector<int>& path, Graph graph) 
 {
+    int sum = 0;
+
+
     int size = path.size();
     for (int i = 0; i < size-1; ++i)
         if (graph.adjancency_matrix[path[i]][path[i + 1]] == 0)
@@ -24,8 +27,11 @@ void printPath(const std::vector<int>& path, Graph graph)
         }
     for (int i = 0; i < size-1; ++i) 
     {
+        sum += graph.adjancency_matrix[path[i]][path[i + 1]];
         std::cout << path[i]+1 << " - " << path[i+1]+1 << " " << graph.adjancency_matrix[path[i]][path[i+1]] << std::endl;
     }
+
+    std::cout << "\nИтоговый вес: " << sum << std::endl;
 }
 
 

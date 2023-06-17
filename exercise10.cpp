@@ -96,6 +96,7 @@ void exercise10(Graph graph)
 {
     int source, sink;
 
+
     // јвтоматическое определение источника и стока
     for (int i = 0; i < graph.number_of_vertex; i++) {
         int outgoingEdges = 0;

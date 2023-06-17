@@ -1,3 +1,4 @@
+
 #include "exercise6.h"
 #include "graph.h"
 #include <vector>
@@ -5,7 +6,7 @@
 #include <string>
 #include <limits>
 
-#define INT_MAX std::numeric_limits<int>::max()
+#define INT_MAX 10000
 
 bool hasNegativeCycle(Graph graph)
 {
@@ -26,9 +27,9 @@ bool hasNegativeCycle(Graph graph)
 }
 
 
-std::vector<int> dijkstra(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
+void dijkstra(Graph& graph, int startVertex, std::vector<int>& distance)
 {
-	int numVertices = graph.size();
+	int numVertices = graph.number_of_vertex;
 	std::vector<bool> visited(numVertices, false); // Посещенные вершины
 
 	distance[startVertex] = 0; // Расстояние до стартовой вершины равно 0
@@ -56,20 +57,18 @@ std::vector<int> dijkstra(std::vector<std::vector<int>> graph, int startVertex, 
 		// Обновляем расстояния до смежных вершин
 		for (int j = 0; j < numVertices; ++j)
 		{
-			if (!visited[j] && graph[minVertex][j] != INT_MAX && distance[minVertex] != INT_MAX
-				&& distance[minVertex] + graph[minVertex][j] < distance[j])
+			if (!visited[j] && graph.adjancency_matrix[minVertex][j] != INT_MAX && distance[minVertex] != INT_MAX
+				&& distance[minVertex] + graph.adjancency_matrix[minVertex][j] < distance[j])
 			{
-				distance[j] = distance[minVertex] + graph[minVertex][j];
+				distance[j] = distance[minVertex] + graph.adjancency_matrix[minVertex][j];
 			}
 		}
 	}
-
-	return distance;
 }
 
-std::vector<int> bellmanFordMoore(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
+void bellmanFordMoore(Graph& graph, int startVertex, std::vector<int>& distance)
 {
-	int numVertices = graph.size();
+	int numVertices = graph.number_of_vertex;
 
 	distance[startVertex] = 0; // Расстояние до стартовой вершины равно 0
 
@@ -79,20 +78,18 @@ std::vector<int> bellmanFordMoore(std::vector<std::vector<int>> graph, int start
 		{
 			for (int k = 0; k < numVertices; ++k)
 			{
-				if (graph[j][k] != INT_MAX && distance[j] != INT_MAX && distance[j] + graph[j][k] < distance[k])
+				if (graph.adjancency_matrix[j][k] != INT_MAX && distance[j] != INT_MAX && distance[j] + graph.adjancency_matrix[j][k] < distance[k])
 				{
-					distance[k] = distance[j] + graph[j][k];
+					distance[k] = distance[j] + graph.adjancency_matrix[j][k];
 				}
 			}
 		}
 	}
-
-	return distance;
 }
 
-std::vector<int> levit(std::vector<std::vector<int>> graph, int startVertex, std::vector<int>& distance)
+void levit(Graph& graph, int startVertex, std::vector<int>& distance)
 {
-	int numVertices = graph.size();
+	int numVertices = graph.number_of_vertex;
 	std::vector<int> level(numVertices, INT_MAX); // Уровень каждой вершины
 	std::queue<int> queue;
 	std::vector<int> inQueue(numVertices, false); // Вершины, находящиеся в очереди
@@ -112,10 +109,9 @@ std::vector<int> levit(std::vector<std::vector<int>> graph, int startVertex, std
 		// Обновляем расстояния до смежных вершин
 		for (int i = 0; i < numVertices; ++i)
 		{
-			if (graph[currentVertex][i] != INT_MAX && distance[currentVertex] != INT_MAX
-				&& distance[currentVertex] + graph[currentVertex][i] < distance[i])
+			if (graph.adjancency_matrix[currentVertex][i] != 0 && distance[currentVertex] + graph.adjancency_matrix[currentVertex][i] < distance[i])
 			{
-				distance[i] = distance[currentVertex] + graph[currentVertex][i];
+				distance[i] = distance[currentVertex] + graph.adjancency_matrix[currentVertex][i];
 
 				if (!inQueue[i])
 				{
@@ -125,8 +121,6 @@ std::vector<int> levit(std::vector<std::vector<int>> graph, int startVertex, std
 			}
 		}
 	}
-
-	return distance;
 }
 
 void exercise6(Graph graph, int argc, const char* argv[])
@@ -168,24 +162,17 @@ void exercise6(Graph graph, int argc, const char* argv[])
 		return;
 	}
 
-	std::vector<std::vector<int>> grap(graph.number_of_vertex, std::vector<int>(graph.number_of_vertex, INT_MAX));
-
-	for (int i = 0; i < graph.number_of_vertex; ++i)
-		for (int j = 0; j < graph.number_of_vertex; ++j)
-			if (graph.adjancency_matrix[i][j] != 0 || i == j)
-				grap[i][j] = graph.adjancency_matrix[i][j];
-
 
 	switch (algorithm)
 	{
 	case 1:
-		dijkstra(grap, start_vertex, distance);
+		dijkstra(graph, start_vertex, distance);
 		break;
 	case 2:
-		bellmanFordMoore(grap, start_vertex, distance);
+		bellmanFordMoore(graph, start_vertex, distance);
 		break;
 	case 3:
-		levit(grap, start_vertex, distance);
+		levit(graph, start_vertex, distance);
 		break;
 	default:
 		std::cout << "Error: Invalid algorithm option.";

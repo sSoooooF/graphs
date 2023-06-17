@@ -1,5 +1,6 @@
 #include "exercise11.h"
 #include <vector>
+#include "exercise3.h"
 
 
 // Функция для проверки, является ли граф двудольным
@@ -58,14 +59,12 @@ int findMaximumMatchings(Graph graph, std::vector<int>& match)
    
     int maxMatching = 0;
 
-    for (int u = 0; u < numVertices; u++) {
+    for (int u = 0; u < numVertices; u++)
         if (match[u] == -1) {
             std::vector<bool> visited(numVertices, false);
-            if (findAugmentingPath(graph, u, match, visited)) {
-                maxMatching++;
-            }
+            if (findAugmentingPath(graph, u, match, visited))
+                maxMatching++;  
         }
-    }
 
     return maxMatching;
 }
@@ -95,12 +94,14 @@ void exercise11(Graph graph)
 
         int maxMatching = findMaximumMatchings(graph, match);
 
+        std::cout << "Количество паросочетаний " << maxMatching << std::endl;
+
         printMatchings(match);
     }
     else
     {
         std::cout << "Граф не двудольный\n";
+        return;
     }
-
 
 }
