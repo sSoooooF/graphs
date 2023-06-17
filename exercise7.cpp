@@ -49,7 +49,6 @@ void bellmanFord(std::vector<std::vector<int>>& adj_matrix, int source, std::vec
                     else {
                         distances[k] = distances[j] + adj_matrix[j][k];
                     }
-
                 }
             }
         }
@@ -89,6 +88,7 @@ void johnsonAlgorithm(Graph& graph) {
         adj_matrix[i].push_back(INF);
     }
 
+    // h - функция кратчайших расстояний
     std::vector<int> h;
     bellmanFord(adj_matrix, num_vert, h);
 
@@ -97,6 +97,8 @@ void johnsonAlgorithm(Graph& graph) {
         adj_matrix[i].pop_back();
     }
 
+
+    // изменение веса 
     for (int i = 0; i < num_vert; i++) {
         for (int j = 0; j < num_vert; j++) {
             if (adj_matrix[i][j] != INF) {
